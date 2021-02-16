@@ -1,0 +1,80 @@
+# ----------------------------------------------------------------------------
+# Copyright (c) 2020-2021, Pelion and affiliates.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ----------------------------------------------------------------------------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{cm_name}}
+  namespace: default
+data:
+  special.how: very
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{secret_name}}
+type: Opaque
+data:
+  secretdata: edge
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{pod_name}}
+spec:
+  automountServiceAccountToken: false
+  containers:
+  - args:
+    - -c
+    - echo 'pod is running'; sleep 6000000
+    command:
+    - /bin/sh
+    image: alpine:3.9
+    imagePullPolicy: IfNotPresent
+    name: client
+    resources:
+      limits:
+        cpu: 200m
+        memory: 100Mi
+      requests:
+        cpu: 200m
+        memory: 100Mi
+    volumeMounts:
+    - mountPath: /my_secret
+      name: examplesecret
+    - mountPath: /my_cm
+      name: examplecm
+    env:
+        - name: SPECIAL_LEVEL_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: {{cm_name}}
+              key: special.how
+        - name: SECRET_DATA
+          valueFrom:
+            secretKeyRef:
+              name: {{secret_name}}
+              key: secretdata
+  hostname: test-pod123
+  nodeName: {{node_name}}
+  volumes:
+  - name: examplecm
+    configMap:
+      name: {{cm_name}}
+  - name: examplesecret
+    secret:
+      secretName: {{secret_name}}
