@@ -1,7 +1,7 @@
 {
     "title": "pelion-edge-ready-test-suite",
     "version":"2.0.0",
-    "device_type": "xillinx",
+    "device_type": "avnet",
     "tests_directory": "test-cases",
     "accountID": "<Pelion Cloud Account ID>",
     "internal_id": "<Pelion Cloud Internal ID>",
