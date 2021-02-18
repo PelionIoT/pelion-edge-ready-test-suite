@@ -65,7 +65,7 @@
     "binary_path": {
         "edge_core": "/wigwag/mbed/edge-core"
     },
-    "progam_version": {
+    "program_version": {
         "maestro": "0.1.0",
         "docker": "19.03.12-ce",
         "openssh": "OpenSSH_8.2p1",
