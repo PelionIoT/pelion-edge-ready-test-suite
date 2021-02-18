@@ -30,7 +30,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
                 if(error) {
                     done(error)
                 } else {
-                    assert.equal(compareVersions.compare(stdout.trim(), config.progam_version.maestro, '>='), true, "Maestro version not valid")
+                    assert.equal(compareVersions.compare(stdout.trim(), config.program_version.maestro, '>='), true, "Maestro version not valid")
                     done()
                 }
             })
@@ -40,7 +40,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
                 if(error) {
                     done(error)
                 } else {
-                    assert.equal(compareVersions.compare(stdout.trim(), config.progam_version.docker, '>='), true, "Docker version not valid")
+                    assert.equal(compareVersions.compare(stdout.trim(), config.program_version.docker, '>='), true, "Docker version not valid")
                     done()
                 }
             })
@@ -50,7 +50,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
                 if(error) {
                     done(error)
                 } else {
-                    assert.equal(compareVersions.compare(stdout.trim(), config.progam_version.openssl, '>='), true, "SSL version not valid")
+                    assert.equal(compareVersions.compare(stdout.trim(), config.program_version.openssl, '>='), true, "SSL version not valid")
                     done()
                 }
             })
@@ -60,7 +60,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
                 if(error) {
                     done(error)
                 } else {
-                    assert.equal(stderr.split(',')[0], config.progam_version.openssh, "SSH version not valid")
+                    assert.equal(stderr.split(',')[0], config.program_version.openssh, "SSH version not valid")
                     done()
                 }
             })
@@ -70,7 +70,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
                 if(error) {
                     done(error)
                 } else {
-                    assert.equal(compareVersions.compare(stdout.trim(), config.progam_version.node, '>='), true, "Node version not valid")
+                    assert.equal(compareVersions.compare(stdout.trim(), config.program_version.node, '>='), true, "Node version not valid")
                     done()
                 }
             })
@@ -81,7 +81,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
                 if(error) {
                     done(error)
                 } else {
-                    assert.equal(compareVersions.compare(stdout.trim(), config.progam_version.edge_core, '>='), true, "Edge core version not valid")
+                    assert.equal(compareVersions.compare(stdout.trim(), config.program_version.edge_core, '>='), true, "Edge core version not valid")
                     done()
                 }
             })
@@ -91,7 +91,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
                 if(error) {
                     done(error)
                 } else {
-                    assert.equal(compareVersions.compare(stdout.trim(), config.progam_version.kernel, '>='), true, "Kernel version not valid")
+                    assert.equal(compareVersions.compare(stdout.trim(), config.program_version.kernel, '>='), true, "Kernel version not valid")
                     done()
                 }
             })
@@ -101,7 +101,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
                 if(error) {
                     done(error)
                 } else {
-                    assert.equal(compareVersions.compare(stdout.trim(), config.progam_version["td-agent-bit"], '>='), true, "Fluent-bit version not valid")
+                    assert.equal(compareVersions.compare(stdout.trim(), config.program_version["td-agent-bit"], '>='), true, "Fluent-bit version not valid")
                     done()
                 }
             })

@@ -51,7 +51,7 @@ describe('[Level 3] NetworkAndConnectivityTests', () => {
         })
     })
     describe('#ConnectivityTests', () => {
-        config.connectiveity_dns.forEach((lookup_url) => {
+        config.connectivity_dns.forEach((lookup_url) => {
             it(`Should return true if ${lookup_url} is reachable`, (done) => {
                 dns.lookup(`${lookup_url}`, (error, address) => {
                     if(error) {

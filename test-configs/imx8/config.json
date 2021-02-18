@@ -3,7 +3,7 @@
     "version":"2.0.0",
     "device_type": "i.MX8",
     "tests_directory": "test-cases",
-    "accountID": "<Pelion Cloud Accoun ID>",
+    "accountID": "<Pelion Cloud Account ID>",
     "internal_id": "<Pelion Cloud Internal ID>",
     "access_key": "<Pelion Cloud Access Key>",
     "test_cases": [
@@ -46,7 +46,7 @@
         "wired": "eth0",
         "wireless": "wlan0"
     },
-    "connectiveity_dns": [
+    "connectivity_dns": [
         "google.com",
         "api.us-east-1.mbedcloud.com",
         "gateways.us-east-1.mbedcloud.com",
