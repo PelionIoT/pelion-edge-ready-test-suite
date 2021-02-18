@@ -76,7 +76,7 @@ describe('[Level 1] SpecificationTests', () => {
         })
     })
     describe("#ConfigChecks", () => {
-        if(config.device_type != 'xillinx'){
+        if(config.device_type != 'avnet'){
             it("Should return true if chip tempature less then thresold", (done) => {
                 exec("cat /sys/devices/virtual/thermal/thermal_zone0/temp", (error, stdout, stderr) => {
                     var die_temp = config.specifications.SOC_die_temprature
