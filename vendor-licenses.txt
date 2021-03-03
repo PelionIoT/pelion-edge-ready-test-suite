@@ -946,7 +946,7 @@ END OF TERMS AND CONDITIONS
 
 The following NPM packages may be included in this product:
 
- - chai@4.2.0
+ - chai@4.3.1
 
 These packages each contain the following license and notice below:
 
