@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/PelionIoT/pelion-edge-ready-test-suite#readme",
   "dependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.1",
     "colors": "^1.4.0",
     "commander": "^6.0.0",
     "compare-versions": "^3.6.0",
