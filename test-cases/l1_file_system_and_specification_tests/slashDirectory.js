@@ -16,40 +16,39 @@
  */
 
 /*
-* [Level 1] Slash directory testcaes for pelion edge
-*/
+ * [Level 1] Slash directory testcaes for pelion edge
+ */
 
-var fs = require("fs")
+var fs = require('fs')
 var assert = require('chai').assert
 
-
 describe('[Level 1] SlashDirectoryTests', () => {
-    describe('#SlashDirExistace', () => {
-        config.fileSystem.forEach( dir_name => {
-            var dir_path = "/" + dir_name
-            it(`Should pass if ${dir_name} exists`, (done) => {
-                assert.equal(fs.existsSync(dir_path), true, `${dir_name} not exist`);
-                done()
-            })
-        });
+  describe('#SlashDirExistace', () => {
+    global.config.fileSystem.forEach(dir_name => {
+      var dir_path = '/' + dir_name
+      it(`Should pass if ${dir_name} exists`, done => {
+            assert.equal(fs.existsSync(dir_path), true, `${dir_name} not exist`)
+        done()
+      })
     })
-    describe('#SlashDirSize', () => {
-        config.fileSystem.forEach( dir_name => {
-            var dir_path = "/" + dir_name
-            it(`Should pass if ${dir_name} not empty`, (done) => {
-                fs.readdir(dir_path, (err, files) => {
-                    if(fs.existsSync(dir_path)) {
-                        if(err) {
-                            done(err)
-                        } else {
-                            assert.isAtLeast(files.length, 0, `$dir_name} is empty`)
-                            done()
-                        }
-                    }else{
-                        done(new Error(`${dir_path} Path not found`))
-                    }
-                });
-            })
-        });
+  })
+  describe('#SlashDirSize', () => {
+    global.config.fileSystem.forEach(dir_name => {
+      var dir_path = '/' + dir_name
+      it(`Should pass if ${dir_name} not empty`, done => {
+        fs.readdir(dir_path, (err, files) => {
+          if (fs.existsSync(dir_path)) {
+            if (err) {
+              done(err)
+            } else {
+              assert.isAtLeast(files.length, 0, `$dir_name} is empty`)
+              done()
+            }
+          } else {
+            done(new Error(`${dir_path} Path not found`))
+          }
+        })
+      })
     })
+  })
 })

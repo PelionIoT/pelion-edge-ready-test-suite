@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module.exports = function(file) {
-    var fs = require('fs');
-    if(fs.existsSync(file)) {
-        try {
-            return JSON.parse(fs.readFileSync(file, 'utf8')).hardwareVersion;
-        } catch(err) {
-            return null;
-        }
-    } else {
-        return null;
+module.exports = function (file) {
+  var fs = require('fs')
+  if (fs.existsSync(file)) {
+    try {
+      return JSON.parse(fs.readFileSync(file, 'utf8')).hardwareVersion
+    } catch (err) {
+      return null
     }
-};
+  } else {
+    return null
+  }
+}

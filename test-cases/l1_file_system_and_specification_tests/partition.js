@@ -16,38 +16,53 @@
  */
 
 /*
-* [Level 1] Partition validation testcases for pelion edge
-*/
+ * [Level 1] Partition validation testcases for pelion edge
+ */
 var assert = require('chai').assert
 var exec = require('child_process').exec
 
 describe('[Level 1] PartitionTests', () => {
-    describe('#PartitionMount', () => {
-        Object.keys(config.partitions).forEach((partition_name) => {
-            it(`Should return true if ${partition_name} partition mounted`, (done) => {
-                exec(`df -h | grep ${partition_name} | awk '{print $1}'`, (error, stdout, stderr) => {
-                    if(error) {
-                        done(error)
-                    } else {
-                        assert.equal(stdout.trim(), partition_name, `${partition_name} not found`)
-                        done()
-                    }
-                })
-            })
-        })
+  describe('#PartitionMount', () => {
+    Object.keys(global.config.partitions).forEach(partition_name => {
+      it(`Should return true if ${partition_name} partition mounted`, done => {
+        exec(
+          `df -h | grep ${partition_name} | awk '{print $1}'`,
+          (error, stdout) => {
+            if (error) {
+              done(error)
+            } else {
+              assert.equal(
+                stdout.trim(),
+                partition_name,
+                `${partition_name} not found`
+              )
+              done()
+            }
+          }
+        )
+      })
     })
-    describe('#PartitionSize', () => {
-        Object.keys(config.partitions).forEach((partition_name) => {
-            it(`Should return true if ${partition_name} partition mounted`, (done) => {
-                exec(`df -h | grep ${partition_name} | awk '{print $2}'`, (error, stdout, stderr) => {
-                    if(error) {
-                        done(error)
-                    } else {
-                        assert.operator(parseFloat(stdout.trim()), ">=", parseFloat(config.partitions[partition_name].size), `Expected: ${partition_name} size not valid`)
-                        done()
-                    }
-                })
-            })
-        })
+  })
+  describe('#PartitionSize', () => {
+    Object.keys(global.config.partitions).forEach(partition_name => {
+      it(`Should return true if ${partition_name} partition mounted`, done => {
+        exec(
+          `df -h | grep ${partition_name} | awk '{print $2}'`,
+          (error, stdout) => {
+            if (error) {
+              done(error)
+            } else {
+              assert.operator(
+                parseFloat(stdout.trim()),
+                '>=',
+                parseFloat(global.config.partitions[partition_name].size),
+                `Expected: ${partition_name} size not valid`
+              )
+              done()
+            }
+          }
+        )
+      })
     })
+  })
 })

@@ -14,100 +14,136 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
-const CMDSYNC2 = require('child_process').execSync;
+'use strict'
+var colors = require('colors')
 
-var colors = require('colors');
+function getDateTime () {
+  var date = new Date()
 
-function getDateTime() {
-    var date = new Date();
+  var hour = date.getHours()
+  hour = (hour < 10 ? '0' : '') + hour
 
-    var hour = date.getHours();
-    hour = (hour < 10 ? "0" : "") + hour;
+  var min = date.getMinutes()
+  min = (min < 10 ? '0' : '') + min
 
-    var min  = date.getMinutes();
-    min = (min < 10 ? "0" : "") + min;
+  var sec = date.getSeconds()
+  sec = (sec < 10 ? '0' : '') + sec
 
-    var sec  = date.getSeconds();
-    sec = (sec < 10 ? "0" : "") + sec;
+  var year = date.getFullYear()
 
-    var year = date.getFullYear();
+  var month = date.getMonth() + 1
+  month = (month < 10 ? '0' : '') + month
 
-    var month = date.getMonth() + 1;
-    month = (month < 10 ? "0" : "") + month;
+  var day = date.getDate()
+  day = (day < 10 ? '0' : '') + day
 
-    var day  = date.getDate();
-    day = (day < 10 ? "0" : "") + day;
-
-    return year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec;
+  return year + ':' + month + ':' + day + ':' + hour + ':' + min + ':' + sec
 }
 
-var logger = console;
-if(typeof dev$ !== 'undefined') 
-    logger = log;
+var logger = console
 
-var Logger = function(options) {
-    this._moduleName = 'unknown';
-    if(typeof options.moduleName != 'undefined')
-        this._moduleName = options.moduleName;
+var Logger = function (options) {
+  this._moduleName = 'unknown'
+  if (typeof options.moduleName != 'undefined')
+    this._moduleName = options.moduleName
 
-    this.color = colors.white;
-    if(typeof options.color != 'undefined') {
-        this.color = colors[options.color];
-    }
+  this.color = colors.white
+  if (typeof options.color != 'undefined') {
+    this.color = colors[options.color]
+  }
 
-    if(typeof global.SQALogLevel === 'undefined') {
-        global.SQALogLevel = 5;
-    }
+  if (typeof global.SQALogLevel === 'undefined') {
+    global.SQALogLevel = 5
+  }
 }
 
-Logger.prototype.error = function(str) {
-    if(typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 0) {
-        if(typeof logger.error != 'undefined')
-            logger.error(colors['red']('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-        else 
-            console.error(colors['red']('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-    }
+Logger.prototype.error = function (str) {
+  if (typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 0) {
+    if (typeof logger.error != 'undefined')
+      logger.error(
+        colors['red'](
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+    else
+      console.error(
+        colors['red'](
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+  }
 }
 
-Logger.prototype.warn = function(str) {
-    if(typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 1) {
-        if(typeof logger.warn != 'undefined')
-            logger.warn(colors['yellow']('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-        else
-            console.warn(colors['yellow']('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-    }
+Logger.prototype.warn = function (str) {
+  if (typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 1) {
+    if (typeof logger.warn != 'undefined')
+      logger.warn(
+        colors['yellow'](
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+    else
+      console.warn(
+        colors['yellow'](
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+  }
 }
 
-Logger.prototype.info = function(str) {
-    if(typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 2) {
-        if(typeof logger.info != 'undefined')
-            logger.info(this.color('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-        else
-            console.log(this.color('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-    }
+Logger.prototype.info = function (str) {
+  if (typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 2) {
+    if (typeof logger.info != 'undefined')
+      logger.info(
+        this.color(
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+    else
+      console.log(
+        this.color(
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+  }
 }
 
-Logger.prototype.debug = function(str) {
-    if(typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 3) {
-        if(typeof logger.info != 'undefined')
-            logger.info(this.color('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-        else
-            console.log(this.color('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-    }
+Logger.prototype.debug = function (str) {
+  if (typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 3) {
+    if (typeof logger.info != 'undefined')
+      logger.info(
+        this.color(
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+    else
+      console.log(
+        this.color(
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+  }
 }
 
-Logger.prototype.trace = function(str) {
-    if(typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 4) {
-        if(typeof logger.info != 'undefined')
-            logger.info(this.color('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-        else
-            console.log(this.color('[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' +  str));
-    }
+Logger.prototype.trace = function (str) {
+  if (typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 4) {
+    if (typeof logger.info != 'undefined')
+      logger.info(
+        this.color(
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+    else
+      console.log(
+        this.color(
+          '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
+        )
+      )
+  }
 }
 
-Logger.prototype.append = function(str) {
-    process.stdout.write(this.color(str));
+Logger.prototype.append = function (str) {
+  process.stdout.write(this.color(str))
 }
 
-module.exports = Logger;
+module.exports = Logger
