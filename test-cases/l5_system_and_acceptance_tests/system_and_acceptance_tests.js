@@ -65,10 +65,11 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
   describe('#SystemLogsFluentBitTests', () => {
     it('It should update fluent bit config', done => {
       updateConfigWithTestData(50)
-      exec(`./scripts/swap_td_config.sh`)
       setTimeout(() => {
         exec(
-          `cat ${global.config.config_path.td_agent_bit_conf}`,
+          `./scripts/swap_td_config.sh && cat ${
+            global.config.config_path.td_agent_bit_conf
+          }`,
           (error, stdout) => {
             if (error) {
               done(error)
@@ -101,39 +102,38 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
       }, 20000)
     })
     it('It should return true if original config is updated again', done => {
-      exec(`./scripts/swap_td_config.sh`)
-      setTimeout(() => {
-        exec(
-          `cat ${global.config.config_path.td_agent_bit_conf}`,
-          (error, stdout) => {
-            if (error) {
-              done(error)
-            } else {
-              assert.include(
-                stdout.trim(),
-                'systemd',
-                `systemd is not preset in config`
-              )
-              assert.include(
-                stdout.trim(),
-                'edge_core_tag',
-                `edge_core_tag is not preset in config`
-              )
-              assert.include(
-                stdout.trim(),
-                'edge_proxy_tag',
-                `edge_proxy_tag is not preset in config`
-              )
-              assert.include(
-                stdout.trim(),
-                'maestro_tag',
-                `maestro_tag is not preset in config`
-              )
-              done()
-            }
+      exec(
+        `./scripts/swap_td_config.sh && cat ${
+          global.config.config_path.td_agent_bit_conf
+        }`,
+        (error, stdout) => {
+          if (error) {
+            done(error)
+          } else {
+            assert.include(
+              stdout.trim(),
+              'systemd',
+              `systemd is not preset in config`
+            )
+            assert.include(
+              stdout.trim(),
+              'edge_core_tag',
+              `edge_core_tag is not preset in config`
+            )
+            assert.include(
+              stdout.trim(),
+              'edge_proxy_tag',
+              `edge_proxy_tag is not preset in config`
+            )
+            assert.include(
+              stdout.trim(),
+              'maestro_tag',
+              `maestro_tag is not preset in config`
+            )
+            done()
           }
-        )
-      }, 5000)
+        }
+      )
     })
     it('It should return true if fluent bit logs updated in the cloud', done => {
       var options = {

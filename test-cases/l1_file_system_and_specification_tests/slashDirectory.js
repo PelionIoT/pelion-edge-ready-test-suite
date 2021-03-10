@@ -27,7 +27,7 @@ describe('[Level 1] SlashDirectoryTests', () => {
     global.config.fileSystem.forEach(dir_name => {
       var dir_path = '/' + dir_name
       it(`Should pass if ${dir_name} exists`, done => {
-            assert.equal(fs.existsSync(dir_path), true, `${dir_name} not exist`)
+        assert.equal(fs.existsSync(dir_path), true, `${dir_name} not exist`)
         done()
       })
     })
