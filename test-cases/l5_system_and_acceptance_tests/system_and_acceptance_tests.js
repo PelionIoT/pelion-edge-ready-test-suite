@@ -33,9 +33,14 @@ function updateConfigWithTestData (length) {
 describe('[Level 5] SystemAndAcceptanceTests', () => {
   describe('EdgeServices', () => {
     global.config.services.forEach(Service => {
+      if(global.config.edge_build_type == 'snap') {
+        system_service = 'snap'
+      } else {
+        system_service = 'systemctl'
+      }
       it(`Should return true if ${Service} is stopped`, done => {
         exec(
-          `sudo systemctl stop ${Service} && systemctl status ${Service}`,
+          `sudo ${system_service} stop ${Service} && ${system_service} status ${Service}`,
           (err, stdout) => {
             assert.include(stdout.trim(), 'inactive', 'Service did not stopped')
             done()
@@ -44,7 +49,7 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
       })
       it(`Should return true if ${Service} is started`, done => {
         exec(
-          `sudo systemctl start ${Service} && systemctl status ${Service}`,
+          `sudo ${system_service} start ${Service} && ${system_service} status ${Service}`,
           (err, stdout) => {
             assert.include(stdout.trim(), 'active', 'Service did not started')
             done()
@@ -53,7 +58,7 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
       })
       it(`Should return true if ${Service} is restarted`, done => {
         exec(
-          `sudo systemctl restart ${Service} && systemctl status ${Service}`,
+          `sudo ${system_service} restart ${Service} && ${system_service} status ${Service}`,
           (err, stdout) => {
             assert.include(stdout.trim(), 'active', 'Service did not restarted')
             done()
@@ -63,7 +68,10 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
     })
   })
   describe('#SystemLogsFluentBitTests', () => {
-    it('It should update fluent bit config', done => {
+    it('It should update fluent bit config', function(done) {
+      if(global.config.edge_build_type == 'snap') {
+        this.skip()
+      }
       updateConfigWithTestData(50)
       setTimeout(() => {
         exec(
