@@ -35,30 +35,32 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
     global.config.services.forEach(Service => {
       if(global.config.edge_build_type == 'snap') {
         system_service = 'snap'
+        status = 'services'
       } else {
         system_service = 'systemctl'
+        status = 'status'
       }
-      it(`Should return true if ${Service} is stopped`, done => {
+      it(`Should return true if ${Service} is stopped`, function(done) {
         exec(
-          `sudo ${system_service} stop ${Service} && ${system_service} status ${Service}`,
+          `sudo ${system_service} stop ${Service} && ${system_service} ${status} ${Service}`,
           (err, stdout) => {
             assert.include(stdout.trim(), 'inactive', 'Service did not stopped')
             done()
           }
         )
       })
-      it(`Should return true if ${Service} is started`, done => {
+      it(`Should return true if ${Service} is started`, function(done) {
         exec(
-          `sudo ${system_service} start ${Service} && ${system_service} status ${Service}`,
+          `sudo ${system_service} start ${Service} && ${system_service} ${status} ${Service}`,
           (err, stdout) => {
             assert.include(stdout.trim(), 'active', 'Service did not started')
             done()
           }
         )
       })
-      it(`Should return true if ${Service} is restarted`, done => {
+      it(`Should return true if ${Service} is restarted`, function(done) {
         exec(
-          `sudo ${system_service} restart ${Service} && ${system_service} status ${Service}`,
+          `sudo ${system_service} restart ${Service} && ${system_service} ${status} ${Service}`,
           (err, stdout) => {
             assert.include(stdout.trim(), 'active', 'Service did not restarted')
             done()
@@ -93,7 +95,10 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
         )
       }, 5000)
     })
-    it('It should return true if fluent bit service is running', done => {
+    it('It should return true if fluent bit service is running', function(done) {
+      if(global.config.edge_build_type == 'snap') {
+        this.skip()
+      }
       setTimeout(() => {
         exec(`systemctl status td-agent-bit`, (error, stdout) => {
           if (error) {
@@ -109,7 +114,10 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
         })
       }, 20000)
     })
-    it('It should return true if original config is updated again', done => {
+    it('It should return true if original config is updated again', function(done) {
+      if(global.config.edge_build_type == 'snap') {
+        this.skip()
+      }
       exec(
         `./scripts/swap_td_config.sh && cat ${
           global.config.config_path.td_agent_bit_conf
@@ -143,7 +151,10 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
         }
       )
     })
-    it('It should return true if fluent bit logs updated in the cloud', done => {
+    it('It should return true if fluent bit logs updated in the cloud', function(done) {
+      if(global.config.edge_build_type == 'snap') {
+        this.skip()
+      }
       var options = {
         method: 'GET',
         url:
