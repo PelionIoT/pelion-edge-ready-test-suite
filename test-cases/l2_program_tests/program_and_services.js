@@ -22,11 +22,12 @@ var assert = require('chai').assert
 var exec = require('child_process').exec
 var compareVersions = require('compare-versions')
 var fs = require('fs')
+var cmd = ''
 
 describe('[Level 2] ServicesAndProgramExistanceTests', () => {
   describe('#ProgramVersion', () => {
-    it('Should return true if valid maestro version is present',  function(done) {
-      if(global.config.edge_build_type == 'snap') {
+    it('Should return true if valid maestro version is present', function (done) {
+      if (global.config.edge_build_type == 'snap') {
         this.skip()
       }
       exec(
@@ -49,7 +50,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         }
       )
     })
-    it('Should return true if valid docker version is present', function(done) {
+    it('Should return true if valid docker version is present', function (done) {
       exec(
         "docker --version | cut -d',' -f1 | awk '{print $3}'",
         (error, stdout) => {
@@ -70,8 +71,8 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         }
       )
     })
-    it('Should return true if valid openssl version is present', function(done) {
-      if(global.config.edge_build_type == 'snap') {
+    it('Should return true if valid openssl version is present', function (done) {
+      if (global.config.edge_build_type == 'snap') {
         this.skip()
       }
       exec(
@@ -94,8 +95,8 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         }
       )
     })
-    it('Should return true if valid openssh version is present', function(done) {
-      if(global.config.edge_build_type == 'snap') {
+    it('Should return true if valid openssh version is present', function (done) {
+      if (global.config.edge_build_type == 'snap') {
         this.skip()
       }
       exec('ssh -V', (error, stdout, stderr) => {
@@ -111,7 +112,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         }
       })
     })
-    it('Should return true if valid node version is present', function(done) {
+    it('Should return true if valid node version is present', function (done) {
       exec('node --version | cut -c2-9', (error, stdout) => {
         if (error) {
           done(error)
@@ -129,7 +130,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         }
       })
     })
-    it('Should return true if valid edge-core version is present', function(done) {
+    it('Should return true if valid edge-core version is present', function (done) {
       var edge_core_path = global.config.binary_path.edge_core
       exec(`${edge_core_path} --version | cut -d'-' -f1`, (error, stdout) => {
         if (error) {
@@ -148,7 +149,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         }
       })
     })
-    it('Should return true if valid kernel version is present', function(done) {
+    it('Should return true if valid kernel version is present', function (done) {
       exec("uname -r | cut -d'-' -f1", (error, stdout) => {
         if (error) {
           done(error)
@@ -166,8 +167,8 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         }
       })
     })
-    it('Should return true if valid Fluent-bit version is present', function(done) {
-      if(global.config.edge_build_type == 'snap') {
+    it('Should return true if valid Fluent-bit version is present', function (done) {
+      if (global.config.edge_build_type == 'snap') {
         this.skip()
       }
       exec(
@@ -193,8 +194,8 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
   })
   describe('#ServiceStatus', () => {
     global.config.services.forEach(service_name => {
-      it(`Should return true if ${service_name} is running`, function(done) {
-        if(global.config.edge_build_type == 'snap') {
+      it(`Should return true if ${service_name} is running`, function (done) {
+        if (global.config.edge_build_type == 'snap') {
           cmd = `snap services ${service_name}`
         } else {
           cmd = `systemctl status ${service_name}`
@@ -217,7 +218,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
   describe('#DriversExistance', () => {
     global.config.drivers.forEach(driver => {
       var dir_path = `${global.config.drivers_path}/${driver}`
-      it(`Should pass if driver ${driver} exists`, function(done) {
+      it(`Should pass if driver ${driver} exists`, function (done) {
         assert.equal(fs.existsSync(dir_path), true, `${dir_path} not exist`)
         done()
       })

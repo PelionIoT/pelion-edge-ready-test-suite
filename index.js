@@ -138,15 +138,15 @@ var exportToCSVAndXML = code => {
             .name(test.title)
             .time(test.duration)
           test.status = 'PASSED'
-        } else if(test.state == 'pending') {
+        } else if (test.state == 'pending') {
           test.status = 'SKIPPED'
           suite
-          .testCase()
-          .className(test.fullTitle)
-          .name(test.title)
-          .time(test.duration)
-          .skipped(test.title)
-        }else {
+            .testCase()
+            .className(test.fullTitle)
+            .name(test.title)
+            .time(test.duration)
+            .skipped(test.title)
+        } else {
           test.status = 'FAILED'
           if (test.err.message) {
             test.err.message = test.err.message.replace(/[\n,]/g, '')

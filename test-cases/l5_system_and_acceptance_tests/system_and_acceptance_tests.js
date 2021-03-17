@@ -19,6 +19,8 @@ var assert = require('chai').assert
 var exec = require('child_process').exec
 var request = require('request')
 var str = ''
+var system_service = ''
+var status = ''
 
 function updateConfigWithTestData (length) {
   var characters =
@@ -33,14 +35,14 @@ function updateConfigWithTestData (length) {
 describe('[Level 5] SystemAndAcceptanceTests', () => {
   describe('EdgeServices', () => {
     global.config.services.forEach(Service => {
-      if(global.config.edge_build_type == 'snap') {
+      if (global.config.edge_build_type == 'snap') {
         system_service = 'snap'
         status = 'services'
       } else {
         system_service = 'systemctl'
         status = 'status'
       }
-      it(`Should return true if ${Service} is stopped`, function(done) {
+      it(`Should return true if ${Service} is stopped`, function (done) {
         exec(
           `sudo ${system_service} stop ${Service} && ${system_service} ${status} ${Service}`,
           (err, stdout) => {
@@ -49,7 +51,7 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
           }
         )
       })
-      it(`Should return true if ${Service} is started`, function(done) {
+      it(`Should return true if ${Service} is started`, function (done) {
         exec(
           `sudo ${system_service} start ${Service} && ${system_service} ${status} ${Service}`,
           (err, stdout) => {
@@ -58,7 +60,7 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
           }
         )
       })
-      it(`Should return true if ${Service} is restarted`, function(done) {
+      it(`Should return true if ${Service} is restarted`, function (done) {
         exec(
           `sudo ${system_service} restart ${Service} && ${system_service} ${status} ${Service}`,
           (err, stdout) => {
@@ -70,8 +72,8 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
     })
   })
   describe('#SystemLogsFluentBitTests', () => {
-    it('It should update fluent bit config', function(done) {
-      if(global.config.edge_build_type == 'snap') {
+    it('It should update fluent bit config', function (done) {
+      if (global.config.edge_build_type == 'snap') {
         this.skip()
       }
       updateConfigWithTestData(50)
@@ -95,8 +97,8 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
         )
       }, 5000)
     })
-    it('It should return true if fluent bit service is running', function(done) {
-      if(global.config.edge_build_type == 'snap') {
+    it('It should return true if fluent bit service is running', function (done) {
+      if (global.config.edge_build_type == 'snap') {
         this.skip()
       }
       setTimeout(() => {
@@ -114,8 +116,8 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
         })
       }, 20000)
     })
-    it('It should return true if original config is updated again', function(done) {
-      if(global.config.edge_build_type == 'snap') {
+    it('It should return true if original config is updated again', function (done) {
+      if (global.config.edge_build_type == 'snap') {
         this.skip()
       }
       exec(
@@ -151,8 +153,8 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
         }
       )
     })
-    it('It should return true if fluent bit logs updated in the cloud', function(done) {
-      if(global.config.edge_build_type == 'snap') {
+    it('It should return true if fluent bit logs updated in the cloud', function (done) {
+      if (global.config.edge_build_type == 'snap') {
         this.skip()
       }
       var options = {
