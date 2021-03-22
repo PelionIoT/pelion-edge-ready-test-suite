@@ -112,13 +112,13 @@ Logger.prototype.debug = function (str) {
   if (typeof global.SQALogLevel != 'undefined' && global.SQALogLevel >= 3) {
     if (typeof logger.info != 'undefined')
       logger.info(
-        this.color(
+        colors['yellow'](
           '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
         )
       )
     else
       console.log(
-        this.color(
+        colors['yellow'](
           '[' + getDateTime() + '] SQA' + ' ' + this._moduleName + ': ' + str
         )
       )
