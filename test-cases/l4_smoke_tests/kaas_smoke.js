@@ -24,7 +24,7 @@ var sleep = require('atomic-sleep')
 var cm_name = 'test-cm' + randomstring.generate({ charset: 'hex' })
 var secret_name = 'test-secret' + randomstring.generate({ charset: 'hex' })
 var pod_name = 'test-pod' + randomstring.generate({ charset: 'hex' })
-var Logger = require('../utils/logger')
+var Logger = require('../../utils/logger')
 var logger = new Logger({ moduleName: '', color: 'yellow' })
 
 describe('[Level 4] KAASTests', () => {
