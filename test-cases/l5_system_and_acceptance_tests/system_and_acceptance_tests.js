@@ -21,6 +21,7 @@ var request = require('request')
 var str = ''
 var system_service = ''
 var status = ''
+var cmd = ''
 
 function updateConfigWithTestData (length) {
   var characters =
@@ -43,22 +44,26 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
         status = 'status'
       }
       it(`Should return true if ${Service} is stopped`, function (done) {
-        exec(
-          `sudo ${system_service} stop ${Service} && ${system_service} ${status} ${Service}`,
-          (err, stdout) => {
-            assert.include(stdout.trim(), 'inactive', 'Service did not stopped')
-            done()
-          }
-        )
+        if (global.config.edge_build_type == 'snap') {
+          cmd = `sudo ${system_service} stop ${Service} && ${system_service} ${status} ${Service}`
+        } else {
+          cmd = `sudo ${system_service} mask ${Service} && sudo ${system_service} stop ${Service} && ${system_service} ${status} ${Service}`
+        }
+        exec(cmd, (err, stdout) => {
+          assert.include(stdout.trim(), 'inactive', 'Service did not stopped')
+          done()
+        })
       })
       it(`Should return true if ${Service} is started`, function (done) {
-        exec(
-          `sudo ${system_service} start ${Service} && ${system_service} ${status} ${Service}`,
-          (err, stdout) => {
-            assert.include(stdout.trim(), 'active', 'Service did not started')
-            done()
-          }
-        )
+        if (global.config.edge_build_type == 'snap') {
+          cmd = `sudo ${system_service} start ${Service} && ${system_service} ${status} ${Service}`
+        } else {
+          cmd = `sudo ${system_service} unmask ${Service} && sudo ${system_service} start ${Service} && ${system_service} ${status} ${Service}`
+        }
+        exec(cmd, (err, stdout) => {
+          assert.include(stdout.trim(), 'active', 'Service did not started')
+          done()
+        })
       })
       it(`Should return true if ${Service} is restarted`, function (done) {
         exec(
