@@ -1,0 +1,7 @@
+abc.log
+cm.yaml
+node_modules/
+package-lock.json
+pod.yaml
+secret.yaml
+suite_reports/

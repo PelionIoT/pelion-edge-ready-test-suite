@@ -1,158 +1,158 @@
 {
-    "title": "pelion-edge-ready-test-suite",
-    "version":"2.0.0",
-    "device_type": "avnet",
-    "tests_directory": "test-cases",
-    "accountID": "<Pelion Cloud Account ID>",
-    "internal_id": "<Pelion Cloud Internal ID>",
-    "access_key": "<Pelion Cloud Access Key>",
-    "test_cases": [
-        "test-cases/l1_file_system_and_specification_tests/slashDirectory.js",
-        "test-cases/l1_file_system_and_specification_tests/specifications.js",
-        "test-cases/l1_file_system_and_specification_tests/partition.js",
-        "test-cases/l2_program_tests/program_and_services.js",
-        "test-cases/l3_internet_and_connectivity_tests/network_and_connectivity.js",
-        "test-cases/l4_smoke_tests/edge_smoke.js",
-        "test-cases/l4_smoke_tests/kaas_smoke.js",
-        "test-cases/l5_system_and_acceptance_tests/system_and_acceptance_tests.js"
-    ],
-    "mocha_timeout": 60000,
-	"log_level": 5,
-	"throttle_rate": 500,
-	"create_virtual_devices": false,
-    "generate_detailed_report": true,
-    "internal_server_port": {
-        "edge_core_port": 9101,
-        "enterprise_server_port": 8080
+  "title": "pelion-edge-ready-test-suite",
+  "version": "2.0.0",
+  "device_type": "avnet",
+  "tests_directory": "test-cases",
+  "accountID": "<Pelion Cloud Account ID>",
+  "internal_id": "<Pelion Cloud Internal ID>",
+  "access_key": "<Pelion Cloud Access Key>",
+  "test_cases": [
+    "test-cases/l1_file_system_and_specification_tests/slashDirectory.js",
+    "test-cases/l1_file_system_and_specification_tests/specifications.js",
+    "test-cases/l1_file_system_and_specification_tests/partition.js",
+    "test-cases/l2_program_tests/program_and_services.js",
+    "test-cases/l3_internet_and_connectivity_tests/network_and_connectivity.js",
+    "test-cases/l4_smoke_tests/edge_smoke.js",
+    "test-cases/l4_smoke_tests/kaas_smoke.js",
+    "test-cases/l5_system_and_acceptance_tests/system_and_acceptance_tests.js"
+  ],
+  "mocha_timeout": 60000,
+  "log_level": 5,
+  "throttle_rate": 500,
+  "create_virtual_devices": false,
+  "generate_detailed_report": true,
+  "internal_server_port": {
+    "edge_core_port": 9101,
+    "enterprise_server_port": 8080
+  },
+  "specifications": {
+    "minimum_cpu_core": 1,
+    "min_cpu_freq": 200000,
+    "max_cpu_freq": 4200000,
+    "device_mem": {
+      "MemTotal": 900000,
+      "MemFree": 30000,
+      "MemAvailable": 400000
     },
-    "specifications": {
-        "minimum_cpu_core": 1,
-        "min_cpu_freq": 200000,
-        "max_cpu_freq": 4200000,
-        "device_mem": {
-            "MemTotal": 900000,
-            "MemFree": 30000,
-            "MemAvailable": 400000
-        },
-        "entropy":200,
-        "SOC_die_temprature": 80,
-        "ledConfig": "01",
-        "radioConfig": "00",
-        "hardwareVersion": "rpi3bplus",
-        "apiAddress":"https://api.us-east-1.mbedcloud.com",
-        "gatewayServicesAddress":"https://gateways.us-east-1.mbedcloud.com"
+    "entropy": 200,
+    "SOC_die_temprature": 80,
+    "ledConfig": "01",
+    "radioConfig": "00",
+    "hardwareVersion": "rpi3bplus",
+    "apiAddress": "https://api.us-east-1.mbedcloud.com",
+    "gatewayServicesAddress": "https://gateways.us-east-1.mbedcloud.com"
+  },
+  "interface": {
+    "wired": "eth0",
+    "wireless": "wlan0"
+  },
+  "connectivity_dns": [
+    "google.com",
+    "api.us-east-1.mbedcloud.com",
+    "gateways.us-east-1.mbedcloud.com",
+    "edge-k8s.us-east-1.mbedcloud.com",
+    "lwm2m.us-east-1.mbedcloud.com"
+  ],
+  "config_path": {
+    "identityJSON": "/userdata/edge_gw_config/identity.json",
+    "mcc_config_working": "/userdata/mbed/mcc_config/WORKING",
+    "mcc_config_backup": "/userdata/mbed/mcc_config/BACKUP",
+    "relay_term_config": "/wigwag/wigwag-core-modules/relay-term/config/config.json",
+    "device_db_yaml_config": "/wigwag/etc/devicejs/devicedb.yaml",
+    "td_agent_bit_conf": "/etc/td-agent-bit/td-agent-bit.conf"
+  },
+  "binary_path": {
+    "edge_core": "/wigwag/mbed/edge-core"
+  },
+  "program_version": {
+    "maestro": "0.1.0",
+    "docker": "19.03.13-ce",
+    "openssh": "OpenSSH_8.3p1",
+    "openssl": "1.1.1",
+    "node": "12.19.0",
+    "edge_core": "0.15.0",
+    "kernel": "5.4.97-lmp-standard",
+    "td-agent-bit": "1.3.5"
+  },
+  "partitions": {
+    "/dev/mmcblk1p7": {
+      "name": "Sysroot",
+      "size": "960M"
     },
-    "interface": {
-        "wired": "eth0",
-        "wireless": "wlan0"
+    "/dev/mmcblk1p3": {
+      "name": "Config",
+      "size": "8.9M"
     },
-    "connectivity_dns": [
-        "google.com",
-        "api.us-east-1.mbedcloud.com",
-        "gateways.us-east-1.mbedcloud.com",
-        "edge-k8s.us-east-1.mbedcloud.com",
-        "lwm2m.us-east-1.mbedcloud.com"
-    ],
-    "config_path": {
-        "identityJSON": "/userdata/edge_gw_config/identity.json",
-        "mcc_config_working": "/userdata/mbed/mcc_config/WORKING",
-        "mcc_config_backup": "/userdata/mbed/mcc_config/BACKUP",
-        "relay_term_config": "/wigwag/wigwag-core-modules/relay-term/config/config.json",
-        "device_db_yaml_config": "/wigwag/etc/devicejs/devicedb.yaml",
-        "td_agent_bit_conf": "/etc/td-agent-bit/td-agent-bit.conf"
+    "/dev/mmcblk1p5": {
+      "name": "Flags",
+      "size": "8.9M"
     },
-    "binary_path": {
-        "edge_core": "/wigwag/mbed/edge-core"
+    "/dev/mmcblk1p1": {
+      "name": "Boot",
+      "size": "26M"
     },
-    "program_version": {
-        "maestro": "0.1.0",
-        "docker": "19.03.13-ce",
-        "openssh": "OpenSSH_8.3p1",
-        "openssl": "1.1.1",
-        "node": "12.19.0",
-        "edge_core": "0.15.0",
-        "kernel": "5.4.0",
-        "td-agent-bit": "1.3.5"
+    "/dev/mmcblk1p6": {
+      "name": "Cache",
+      "size": "8.9M"
     },
-    "partitions": {
-        "/dev/mmcblk1p7": {
-            "name": "Sysroot",
-            "size": "960M"
-        },
-        "/dev/mmcblk1p3": {
-            "name": "Config",
-            "size": "8.9M"
-        },
-        "/dev/mmcblk1p5": {
-            "name": "Flags",
-            "size": "8.9M"
-        },
-        "/dev/mmcblk1p1": {
-            "name": "Boot",
-            "size": "26M"
-        },
-        "/dev/mmcblk1p6": {
-            "name": "Cache",
-            "size": "8.9M"
-        },
-        "devtmpfs": {
-            "name": "Dev",
-            "size": "457M"
-        }
-    },
-    "fileSystem": [
-        "bin",
-        "boot",
-        "dev",
-        "etc",
-        "home",
-        "lib",
-        "media",
-        "mnt",
-        "opt",
-        "ostree",
-        "proc",
-        "run",
-        "sbin",
-        "srv",
-        "sys",
-        "sysroot",
-        "tmp",
-        "userdata",
-        "usr",
-        "var",
-        "wigwag"
-    ],
-    "drivers_path": "/lib/modules/5.4.0-lmp-standard/kernel/drivers/",
-    "drivers": [
-        "bcma",
-        "block",
-        "bluetooth",
-        "char",
-        "crypto",
-        "hid",
-        "i2c",
-        "input",
-        "leds",
-        "md",
-        "media",
-        "misc",
-        "net",
-        "remoteproc",
-        "rpmsg",
-        "spi",
-        "ssb",
-        "staging",
-        "usb",
-        "watchdog"
+    "devtmpfs": {
+      "name": "Dev",
+      "size": "457M"
+    }
+  },
+  "fileSystem": [
+    "bin",
+    "boot",
+    "dev",
+    "etc",
+    "home",
+    "lib",
+    "media",
+    "mnt",
+    "opt",
+    "ostree",
+    "proc",
+    "run",
+    "sbin",
+    "srv",
+    "sys",
+    "sysroot",
+    "tmp",
+    "userdata",
+    "usr",
+    "var",
+    "wigwag"
+  ],
+  "drivers_path": "/lib/modules/5.4.97-lmp-standard/kernel/drivers/",
+  "drivers": [
+    "bcma",
+    "block",
+    "bluetooth",
+    "char",
+    "crypto",
+    "hid",
+    "i2c",
+    "input",
+    "leds",
+    "md",
+    "media",
+    "misc",
+    "net",
+    "remoteproc",
+    "rpmsg",
+    "spi",
+    "ssb",
+    "staging",
+    "usb",
+    "watchdog"
   ],
   "services": [
-        "edge-core",
-        "kubelet",
-        "maestro",
-        "edge-proxy",
-        "docker",
-        "pelion-relay-term",
-        "td-agent-bit"
-    ]
+    "edge-core",
+    "kubelet",
+    "maestro",
+    "edge-proxy",
+    "docker",
+    "pelion-relay-term",
+    "td-agent-bit"
+  ]
 }

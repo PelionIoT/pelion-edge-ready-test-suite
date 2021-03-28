@@ -18,20 +18,33 @@
 var request = require('request')
 var assert = require('chai').assert
 
-describe("[Level 4] EdgeCoreTests", () => {
-    describe("#EdgeCore", () => {
-        it('It should return true if edge core is connected with right account' ,(done) => {
-            request(`http://localhost:${config.internal_server_port.edge_core_port}/status`,(err, resp, body) => {
-                if(err) {
-                    done(new Error(err))
-                } else {
-                    var edge_core_info = JSON.parse(body)
-                    var accountID = config.accountID
-                    assert.equal(edge_core_info["status"], "connected",`Edge core is not conncted. Err: ${edge_core_info}`)
-                    assert.equal(edge_core_info["account-id"], accountID, `Edge core is not conncted with right accountID`)
-                    done()
-                }
-            })
-        })
+describe('[Level 4] EdgeCoreTests', () => {
+  describe('#EdgeCore', () => {
+    it('It should return true if edge core is connected with right account', done => {
+      request(
+        `http://localhost:${
+          global.config.internal_server_port.edge_core_port
+        }/status`,
+        (err, resp, body) => {
+          if (err) {
+            done(new Error(err))
+          } else {
+            var edge_core_info = JSON.parse(body)
+            var accountID = global.config.accountID
+            assert.equal(
+              edge_core_info['status'],
+              'connected',
+              `Edge core is not conncted. Err: ${edge_core_info}`
+            )
+            assert.equal(
+              edge_core_info['account-id'],
+              accountID,
+              `Edge core is not conncted with right accountID`
+            )
+            done()
+          }
+        }
+      )
     })
+  })
 })
