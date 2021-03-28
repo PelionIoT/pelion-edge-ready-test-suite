@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier-standard '**/*.js'",
+    "format": "prettier-standard '**/*.js*'",
     "lint": "eslint .",
     "prepush": "npm run format && npm run lint"
   },
