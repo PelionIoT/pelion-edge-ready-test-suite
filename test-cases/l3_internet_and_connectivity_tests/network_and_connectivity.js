@@ -20,48 +20,67 @@ var exec = require('child_process').exec
 var dns = require('dns')
 
 describe('[Level 3] NetworkAndConnectivityTests', () => {
-    describe("#Network", () => {
-        it('Should return true if internet is connected', (done) => {
-            exec("ping -c 5 8.8.8.8 | grep 'packet loss'", (error, stdout, stderr) => {
-                if(error) {
-                    done(new Error(error))
-                } else {
-                    var internet_packet_arr = stdout.split(',')
-                    assert.equal(parseInt(internet_packet_arr[0]), parseInt(internet_packet_arr[1]), "Transmitted packet not equals to received packet")
-                    assert.equal(parseInt(internet_packet_arr[2]), 0, "Packet loss in network")
-                    done()
-                }
-            })
-        })
-        it('Should return true if ip address is provided and internet is connected', (done) => {
-            exec("ip route list | grep -Po 'dev \\K\\w+' | grep -qFf - /proc/net/wireless && echo wireless || echo wired", (error, stdout, stderr) => {
-                if(error) {
-                    done(new Error(error))
-                } else {
-                    var netInterface = Object.keys(require('os').networkInterfaces())
-                    if(stdout.trim() == 'wired') {
-                        assert.isAtLeast(netInterface.indexOf(config.interface.wired), 0, 'Not a valid wired interface')
-                        done()
-                    } else{
-                        assert.isAtLeast(netInterface.indexOf(config.interface.wireless), 0, 'Not a valid wireless interface')
-                        done()
-                    }
-                }
-            })
-        })
+  describe('#Network', () => {
+    it('Should return true if internet is connected', done => {
+      exec("ping -c 5 8.8.8.8 | grep 'packet loss'", (error, stdout) => {
+        if (error) {
+          done(new Error(error))
+        } else {
+          var internet_packet_arr = stdout.split(',')
+          assert.equal(
+            parseInt(internet_packet_arr[0]),
+            parseInt(internet_packet_arr[1]),
+            'Transmitted packet not equals to received packet'
+          )
+          assert.equal(
+            parseInt(internet_packet_arr[2]),
+            0,
+            'Packet loss in network'
+          )
+          done()
+        }
+      })
     })
-    describe('#ConnectivityTests', () => {
-        config.connectivity_dns.forEach((lookup_url) => {
-            it(`Should return true if ${lookup_url} is reachable`, (done) => {
-                dns.lookup(`${lookup_url}`, (error, address) => {
-                    if(error) {
-                        done(new Error(error))
-                    } else {
-                        assert(address, lookup_url, `${lookup_url} is not valid`)
-                        done()
-                    }
-                })
-            })
-        })
+    it('Should return true if ip address is provided and internet is connected', done => {
+      exec(
+        "ip route list | grep -Po 'dev \\K\\w+' | grep -qFf - /proc/net/wireless && echo wireless || echo wired",
+        (error, stdout) => {
+          if (error) {
+            done(new Error(error))
+          } else {
+            var netInterface = Object.keys(require('os').networkInterfaces())
+            if (stdout.trim() == 'wired') {
+              assert.isAtLeast(
+                netInterface.indexOf(global.config.interface.wired),
+                0,
+                'Not a valid wired interface'
+              )
+              done()
+            } else {
+              assert.isAtLeast(
+                netInterface.indexOf(global.config.interface.wireless),
+                0,
+                'Not a valid wireless interface'
+              )
+              done()
+            }
+          }
+        }
+      )
     })
+  })
+  describe('#ConnectivityTests', () => {
+    global.config.connectivity_dns.forEach(lookup_url => {
+      it(`Should return true if ${lookup_url} is reachable`, done => {
+        dns.lookup(`${lookup_url}`, (error, address) => {
+          if (error) {
+            done(new Error(error))
+          } else {
+            assert(address, lookup_url, `${lookup_url} is not valid`)
+            done()
+          }
+        })
+      })
+    })
+  })
 })
