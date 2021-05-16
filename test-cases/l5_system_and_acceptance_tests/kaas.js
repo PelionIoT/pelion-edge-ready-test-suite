@@ -1,8 +1,10 @@
-var exec = require('child_process').exec
+// var exec = require('child_process').exec
 var assert = require('chai').assert
 var expect = require('chai').expect
 const k8s = require('@kubernetes/client-node');
 const request = require('request');
+var streamBuffers = require('stream-buffers');
+var KAAS = require('./../../utils/kaas_utils')
 
 const cluster = {
     name: 'edge-qa',
@@ -32,60 +34,12 @@ kc.loadFromOptions({
     currentContext: context.name,
 });
 
+const statusApi = new k8s.V1Status()
 const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+const nwAPi = kc.makeApiClient(k8s.NetworkingV1Api)
+const exec = new k8s.Exec(kc);
 
 describe('#KAASTests', function() {
-    var kaas_services = [
-        "kubelet",
-        "coredns",
-        "edge-proxy",
-        "kube-router"
-    ]
-    // describe('#KAASServices', function() {
-    //     kaas_services.forEach(function(Service) {
-    //         if (global.config.edge_build_type == 'snap') {
-    //             system_service = 'snap'
-    //             status = 'services'
-    //         } else {
-    //             system_service = 'systemctl'
-    //             status = 'status'
-    //         }
-    //         it(`Should return true if ${Service} is stopped`, function (done) {
-    //             if (global.config.edge_build_type == 'snap') {
-    //               cmd = `sudo ${system_service} stop ${Service} && ${system_service} ${status} ${Service}`
-    //             } else {
-    //               cmd = `sudo ${system_service} mask ${Service} && sudo ${system_service} stop ${Service} && ${system_service} ${status} ${Service}`
-    //             }
-    //             exec(cmd, (err, stdout) => {
-    //               assert.include(stdout.trim(), 'inactive', 'Service did not stopped')
-    //               done()
-    //             })
-    //           })
-    //           it(`Should return true if ${Service} is started`, function (done) {
-    //             if (global.config.edge_build_type == 'snap') {
-    //               cmd = `sudo ${system_service} start ${Service} && ${system_service} ${status} ${Service}`
-    //             } else {
-    //               cmd = `sudo ${system_service} unmask ${Service} && sudo ${system_service} start ${Service} && ${system_service} ${status} ${Service}`
-    //             }
-    //             exec(cmd, (err, stdout) => {
-    //               assert.include(stdout.trim(), 'active', 'Service did not started')
-    //               done()
-    //             })
-    //           })
-    //           it(`Should return true if ${Service} is restarted`, function (done) {
-    //             exec(
-    //               `sudo ${system_service} restart ${Service} && ${system_service} ${status} ${Service}`,
-    //               (err, stdout) => {
-    //                 assert.include(stdout.trim(), 'active', 'Service did not restarted')
-    //                 done()
-    //               }
-    //             )
-    //           })
-    //         // it(`Check services ${kaas_service}`, function() {
-    
-    //         // })
-    //     })    
-    // })
     describe('Kubeconfig', function() {
         it('Should return KAAS cluster info', function(done) {
             var clusters = kc.getClusters();
@@ -110,90 +64,351 @@ describe('#KAASTests', function() {
             expect(contexts[0].namespace).to.equal('default', `Context namespace "${contexts[0].namespace}" is not valid`);
             done()
         });
-
     })
-    describe('ClsuterAndNode', function(){
+    describe('ClusterAndNode', function(){
         it('Should return true is cluster is up', function(done) {
             const opts = {};
             kc.applyToRequest(opts);
             request.get(`${kc.getCurrentCluster().server}/api/v1/namespaces/default/pods`, opts,
                 (error, response, body) => {
                     if (error) {
-                        done(new Error(error))
-                    }
-                    if (response) {
+                        throw new Error(error)
+                    } else{ 
                         expect(response.statusCode).to.equal(200, `Return status Code: ${response.statusCode}`)
                         done()
                     }
             });
         })
-        it('Should return true if node is up', function(done) {
-            k8sApi.readNode('0179238efa59c6cd6c230b9000000000').then(function(resp) {
-                expect(resp.body.metadata.name).to.equal(config.internal_id, `${resp.body.metadata.name} is not valid`)
-                done()
+        it('Should return all nodes list object', async function() {
+            await k8sApi.listNode().then(function(resp) {
+                assert.isArray(resp.body.items)
             }, function(err) {
-                done(new Error(err))
+                throw new Error(err)
             })
-            
+        })
+        it('Should return true if node status is up', async function() {
+            await k8sApi.readNodeStatus(config.internal_id).then(function(resp) {
+                assert.isObject(resp.response.body)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            })         
         })
     })
     describe('Pods', function() {
-        it('Should return pod list', function(done) {            
-            k8sApi.listNamespacedPod('default').then((res) => {
-                assert.isArray(res.body.items, "Not a array")
-                done()
+        it('Should return pod list', async function() {            
+            await k8sApi.listNamespacedPod('default').then((resp) => {
+                assert.isArray(resp.body.items)
             }, function(err) {
-                done(new Error(err))
-            });
-            
+                throw new Error(err)
+            });        
         })
-        it('Should return true if pod is created', function(done){
-            k8sApi.createNamespacedPod('default',{
-                apiVersions: 'v1',
-                kind: 'Pod',
-                metadata: { name: `edge-test-1` },
-                spec: {
-                  automountServiceAccountToken: false,
-                  hostname: 'edge-qa-hello-pod',
-                  nodeName: '0179238efa59c6cd6c230b9000000000',
-                  containers: [{
-                    name: `client`,
-                    image: 'alpine:3.9',
-                    command: ["/bin/sh"],
-                    args: ["-c","echo 'hello'; sleep 6000000"]
-                  }],
-                }
-              }).then(function(resp) {
-                expect(resp.response.statusCode).to.equal(201, `Return Status code: ${resp.response.statusCode}`)
-                done()
-              } ,(err) => {
-                done(err)
-              })
-        })
-        it('Should return pod status', function(done) {
-            k8sApi.readNamespacedPod('edge-test-1', 'default').then((res) => {
-                expect(res.body.status.phase.trim()).to.equal('Running' , `Pos Status: ${res.body.status.phase}`)                
-                done()
-            }, function(error) {
-                done(new Error(error))
-            });            
-        })
-        it('Should return pod logs', function(done) {
-            k8sApi.readNamespacedPodLog('edge-test-1', 'default').then((res) => {
-                expect(res.body.trim()).to.equal('hello' , `Pos log: ${res.body} is not valid`)                
-                done()
-            }, function(error) {
-                done(new Error(error))
-            });            
-        })
-        it('Sould delete pod', function(done) {
-            k8sApi.deleteNamespacedPod('edge-test-1', 'default').then((resp) => {
-                expect(resp.body.metadata.name).to.equal('edge-test-1', `${resp.body.metadata.name} is not deleted`)
-                done()
-            }, (err) => {
-                done(err)
+        it('Should return true if pod is created', async function(){
+            await k8sApi.createNamespacedPod('default',KAAS.podConfig('edge-qa-hello-pod', config.internal_id)).then(function(resp) {
+                assert.isObject(resp.body)
+            }).catch(function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
             })
         })
-       
+        it('Should return pod status', async function() {
+            this.retries(10);
+            await k8sApi.readNamespacedPod('edge-qa-hello-pod', 'default').then((res) => {
+                if(res.body.status.phase.trim() != 'Running') {
+                    console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
+                }
+                expect(res.body.status.phase.trim()).to.equal('Running' , `Pos Status: ${res.body.status.phase}`)                
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            })        
+        })
+        it('Should return pod logs', async function() {
+            await k8sApi.readNamespacedPodLog('edge-qa-hello-pod', 'default').then((res) => {
+                expect(res.body.trim()).to.equal('hello' , `Pos log: ${res.body} is not valid`)                
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            });            
+        })
+        it('Execute command on pod', function(done) {
+            var output = ''
+            var writeBuffer = new streamBuffers.WritableStreamBuffer({
+                initialSize: (100 * 1024),
+                incrementAmount: (10 * 1024)
+            });
+            
+            var readBuffer = new streamBuffers.ReadableStreamBuffer({
+                frequency: 10,
+                chunkSize: 2048
+            });
+
+            exec.exec('default','edge-qa-hello-pod', 'client', ['echo', 'QA pod is up'], writeBuffer, writeBuffer, readBuffer, true, statusApi.status).then(async function(resp) {
+                resp.on('message', function(data) {
+                    output += data.toString().replace('', '')
+                })
+                setTimeout(function() {
+                    assert.include(output.trim(), 'QA pod is up', `${output} is not matching`)
+                    done()
+                }, 5000)
+            }, function(err) {
+                throw new Error(err.response.body.reason + ". Error code:" + err.response.body.code)
+            })
+        })
+        it('Sould delete pod', async function() {
+            await k8sApi.deleteNamespacedPod('edge-qa-hello-pod', 'default').then((resp) => {
+                expect(resp.body.metadata.name.trim()).to.equal('edge-qa-hello-pod', `${resp.body.metadata.name} is not deleted`)
+            }, function (err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            })
+        })       
+    })
+    describe('NetworkPolicyController', function() {
+        var npc_test_pod = [
+            "edge-qa-pod-a",
+            "edge-qa-pod-b"
+        ]
+        npc_test_pod.forEach(function(pod) {
+            it(`Should create pod ${pod} for NPC`, async function() {
+                if(pod == 'edge-qa-pod-a') {
+                    label = 'edge-qa'
+                } else {
+                    label = 'edge-qa-test'
+                }
+                await k8sApi.createNamespacedPod('default',KAAS.podConfig(pod, config.internal_id, label)).then(function(resp) {
+                    assert.isObject(resp.body)
+                }).catch(function(err) {
+                    throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+                })  
+            })
+        })
+        npc_test_pod.forEach(function(pod) {
+            it(`Should return NPC pod ${pod} status`, async function() {
+                this.retries(10);
+                await k8sApi.readNamespacedPod(pod, 'default').then((res) => {
+                    if(res.body.status.phase.trim() != 'Running') {
+                        console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
+                    }
+                    expect(res.body.status.phase.trim()).to.equal('Running' , `Pos Status: ${res.body.status.phase}`)                
+                }, function(err) {
+                    throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+                })        
+            })
+        })
+        it('Should apply deny egress network policy', async function() {
+            await nwAPi.createNamespacedNetworkPolicy('default', KAAS.denyEgressNetworkPolicy('deny-egress-edge-qa-policy', 'edge-qa')).then(function(resp) {
+                expect(resp.response.statusCode).to.equal(201 , `Not able to create network policy. Response: ${resp}`)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            }) 
+        })
+        it('Should return deny egress network policy status', async function() {
+            await nwAPi.readNamespacedNetworkPolicy('deny-egress-edge-qa-policy', 'default').then(function(resp) {
+                expect(resp.response.statusCode).to.be.equal(200, `Not able to get network policy: ${resp.response.statusCode}`)
+                expect(resp.response.statusMessage.trim()).to.be.equal("OK", `Not able to get network policy: ${resp.response.statusCode}`)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            }) 
+        })
+        it('Should return true if Ping Pod-a to Pod-b not working for egress network policy', function(done) {
+            var result = ''
+            var writeBuffer = new streamBuffers.WritableStreamBuffer({
+                initialSize: (100 * 1024),
+                incrementAmount: (10 * 1024)
+            });
+            
+            var readBuffer = new streamBuffers.ReadableStreamBuffer({
+                frequency: 10,
+                chunkSize: 2048
+            });
+            exec.exec('default','edge-qa-pod-a', 'client', ['ping', '-c3', 'edge-qa-pod-b'], writeBuffer, writeBuffer, readBuffer, true, statusApi.status).then(function(resp) {
+                resp.on('message', function(data) {
+                    result += data
+                })
+                setTimeout(function() {
+                    assert.include(result, '0 packets received', `Egress policy did not applied`)
+                    done()
+                }, 20000)
+            }, function(err) {
+                console.log(err)
+                throw new Error(err.response.body.reason + ". Error code:" + err.response.body.code)
+            })
+        })
+        it('Should return true if Ping Pod-b to Pod-a not working for egress network policy', function(done) {
+            var result = ''
+            var writeBuffer = new streamBuffers.WritableStreamBuffer({
+                initialSize: (100 * 1024),
+                incrementAmount: (10 * 1024)
+            });
+            
+            var readBuffer = new streamBuffers.ReadableStreamBuffer({
+                frequency: 10,
+                chunkSize: 2048
+            });
+            exec.exec('default','edge-qa-pod-b', 'client', ['ping', '-c3', 'edge-qa-pod-a'], writeBuffer, writeBuffer, readBuffer, true, statusApi.status).then(function(resp) {
+                resp.on('message', function(data) {
+                    result += data
+                })
+                setTimeout(function() {
+                    assert.include(result, '3 packets received', `Egress policy did not applied`)
+                    done()
+                }, 20000)
+            }, function(err) {
+                console.log(err)
+                throw new Error(err.response.body.reason + ". Error code:" + err.response.body.code)
+            })
+        })
+        it('Should delete deny-ingress-edge-qa-policy network policy', async function() {
+            await nwAPi.deleteNamespacedNetworkPolicy('deny-egress-edge-qa-policy', 'default').then(function(resp) {
+                expect(resp.response.statusCode).to.equal(200 , `Pos log: ${resp} is not valid`)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            })
+        })
+        it('Should apply deny egress network policy', async function() {
+            await nwAPi.createNamespacedNetworkPolicy('default', KAAS.denyIngressNetworkPolicy('deny-ingress-edge-qa-policy', 'edge-qa')).then(function(resp) {
+                expect(resp.response.statusCode).to.equal(201 , `Not able to create network policy. Response: ${resp}`)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            }) 
+        })
+        it('Should return deny ingress network policy status', async function() {
+            await nwAPi.readNamespacedNetworkPolicy('deny-ingress-edge-qa-policy', 'default').then(function(resp) {
+                expect(resp.response.statusCode).to.be.equal(200, `Not able to get network policy: ${resp.response.statusCode}`)
+                expect(resp.response.statusMessage.trim()).to.be.equal("OK", `Not able to get network policy: ${resp.response.statusCode}`)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            }) 
+        })
+        it('Should return true if Ping Pod-a to Pod-b not working for ingress network policy', function(done) {
+            var result = ''
+            var writeBuffer = new streamBuffers.WritableStreamBuffer({
+                initialSize: (100 * 1024),
+                incrementAmount: (10 * 1024)
+            });
+            
+            var readBuffer = new streamBuffers.ReadableStreamBuffer({
+                frequency: 10,
+                chunkSize: 2048
+            });
+            exec.exec('default','edge-qa-pod-a', 'client', ['ping', '-c3', 'edge-qa-pod-b'], writeBuffer, writeBuffer, readBuffer, true, statusApi.status).then(function(resp) {
+                resp.on('message', function(data) {
+                    result += data
+                })
+                setTimeout(function() {
+                    assert.include(result, '3 packets received', `Ingress policy did not applied`)
+                    done()
+                }, 20000)
+            }, function(err) {
+                console.log(err)
+                throw new Error(err.response.body.reason + ". Error code:" + err.response.body.code)
+            })
+        })
+        it('Should return true if Ping Pod-b to Pod-a not working for ingress network policy', function(done) {
+            var result = ''
+            var writeBuffer = new streamBuffers.WritableStreamBuffer({
+                initialSize: (100 * 1024),
+                incrementAmount: (10 * 1024)
+            });
+            
+            var readBuffer = new streamBuffers.ReadableStreamBuffer({
+                frequency: 10,
+                chunkSize: 2048
+            });
+            exec.exec('default','edge-qa-pod-b', 'client', ['ping', '-c3', 'edge-qa-pod-a'], writeBuffer, writeBuffer, readBuffer, true, statusApi.status).then(function(resp) {
+                resp.on('message', function(data) {
+                    result += data
+                })
+                setTimeout(function() {
+                    assert.include(result, '0 packets received', `Ingress policy did not applied`)
+                    done()
+                }, 20000)
+            }, function(err) {
+                console.log(err)
+                throw new Error(err.response.body.reason + ". Error code:" + err.response.body.code)
+            })
+        })
+        it('Should delete deny-ingress-edge-qa-policy network policy', async function() {
+            await nwAPi.deleteNamespacedNetworkPolicy('deny-ingress-edge-qa-policy', 'default').then(function(resp) {
+                expect(resp.response.statusCode).to.equal(200 , `Pos log: ${resp} is not valid`)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            })
+        })
+        it('Should apply deny-egress-ingress-edge-qa-policy network policy', async function() {
+            await nwAPi.createNamespacedNetworkPolicy('default', KAAS.denyEngressIngressNetworkPolicy('deny-egress-ingress-edge-qa-policy', 'edge-qa')).then(function(resp) {
+                expect(resp.response.statusCode).to.equal(201 , `Not able to create network policy. Response: ${resp}`)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            }) 
+        })
+        it('Should return deny-egress-ingress-edge-qa-policy network policy status', async function() {
+            await nwAPi.readNamespacedNetworkPolicy('deny-egress-ingress-edge-qa-policy', 'default').then(function(resp) {
+                expect(resp.response.statusCode).to.be.equal(200, `Not able to get network policy: ${resp.response.statusCode}`)
+                expect(resp.response.statusMessage.trim()).to.be.equal("OK", `Not able to get network policy: ${resp.response.statusCode}`)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            }) 
+        })
+        it('Should return true if Ping Pod-a to Pod-b not working for deny-egress-ingress-edge-qa-policy network policy', function(done) {
+            var result = ''
+            var writeBuffer = new streamBuffers.WritableStreamBuffer({
+                initialSize: (100 * 1024),
+                incrementAmount: (10 * 1024)
+            });
+            
+            var readBuffer = new streamBuffers.ReadableStreamBuffer({
+                frequency: 10,
+                chunkSize: 2048
+            });
+            exec.exec('default','edge-qa-pod-a', 'client', ['ping', '-c3', 'edge-qa-pod-b'], writeBuffer, writeBuffer, readBuffer, true, statusApi.status).then(function(resp) {
+                resp.on('message', function(data) {
+                    result += data
+                })
+                setTimeout(function() {
+                    assert.include(result, '0 packets received', `Ingress policy did not applied`)
+                    done()
+                }, 20000)
+            }, function(err) {
+                console.log(err)
+                throw new Error(err.response.body.reason + ". Error code:" + err.response.body.code)
+            })
+        })
+        it('Should return true if Ping Pod-b to Pod-a not working for deny-egress-ingress-edge-qa-policy network policy', function(done) {
+            var result = ''
+            var writeBuffer = new streamBuffers.WritableStreamBuffer({
+                initialSize: (100 * 1024),
+                incrementAmount: (10 * 1024)
+            });
+            
+            var readBuffer = new streamBuffers.ReadableStreamBuffer({
+                frequency: 10,
+                chunkSize: 2048
+            });
+            exec.exec('default','edge-qa-pod-b', 'client', ['ping', '-c3', 'edge-qa-pod-a'], writeBuffer, writeBuffer, readBuffer, true, statusApi.status).then(function(resp) {
+                resp.on('message', function(data) {
+                    result += data
+                })
+                setTimeout(function() {
+                    assert.include(result, '0 packets received', `Ingress policy did not applied`)
+                    done()
+                }, 20000)
+            }, function(err) {
+                console.log(err)
+                throw new Error(err.response.body.reason + ". Error code:" + err.response.body.code)
+            })
+        })
+        it('Should delete deny-egress-ingress-edge-qa-policy network policy', async function() {
+            await nwAPi.deleteNamespacedNetworkPolicy('deny-egress-ingress-edge-qa-policy', 'default').then(function(resp) {
+                expect(resp.response.statusCode).to.equal(200 , `Pos log: ${resp} is not valid`)
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            })
+        })
+        npc_test_pod.forEach(function(pod) {
+            it(`Should delete NPC pod ${pod}`, async function() {
+                await k8sApi.deleteNamespacedPod(pod, 'default').then((resp) => {
+                    expect(resp.body.metadata.name.trim()).to.equal(pod, `${resp.body.metadata.name} is not deleted`)
+                }, function (err) {
+                    throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+                })
+            }) 
+        })
     })
 }) 
