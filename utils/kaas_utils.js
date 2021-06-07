@@ -27,6 +27,65 @@ module.exports.podConfig = (podname, nodename, label = {"app": "test"}, containe
     }
 }
 
+module.exports.podWithHostNW = (podname, nodename, label = {"app": "test"}, containername = "client", conatinerimage = "alpine:3.9") => {
+  return {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "name": podname,
+      "labels": label
+    },
+    "spec": {
+      "hostNetwork": true,
+      "automountServiceAccountToken": false,
+      "hostname": podname,
+      "nodeName": nodename,
+      "containers": [
+        {
+          "name": containername,
+          "image": conatinerimage,
+          "command": [
+            "/bin/sh"
+          ],
+          "args": [
+            "-c",
+            "echo 'hello'; sleep 6000000"
+          ]
+        }
+      ]
+    }
+  }
+}
+
+module.exports.podWithFixHostname = (podname, nodename, label = {"app": "test"}, containername = "client", conatinerimage = "alpine:3.9") => {
+  return {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "name": podname,
+      "labels": label
+    },
+    "spec": {
+      "automountServiceAccountToken": false,
+      "hostname": 'test-hostname',
+      "nodeName": nodename,
+      "containers": [
+        {
+          "name": containername,
+          "image": conatinerimage,
+          "command": [
+            "/bin/sh"
+          ],
+          "args": [
+            "-c",
+            "echo 'hello'; sleep 6000000"
+          ]
+        }
+      ]
+    }
+  }
+}
+
 module.exports.denyEgressNetworkPolicy = (policyname, label = "test") => {
     return {
         "apiVersion": "networking.k8s.io/v1",
@@ -201,7 +260,7 @@ module.exports.driveSideNetworkPolicy = () => {
           "to": [
             {
               "ipBlock": {
-                "cidr": "10.240.0.0/24"
+                "cidr": "192.168.100.0/24"
               }
             }
           ]
