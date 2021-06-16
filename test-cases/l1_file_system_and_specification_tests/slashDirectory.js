@@ -23,7 +23,7 @@ var fs = require('fs')
 var assert = require('chai').assert
 
 describe('[Level 1] SlashDirectoryTests', () => {
-  describe('#SlashDirExistace', () => {
+  describe('#SlashDirExistance', () => {
     global.config.fileSystem.forEach(dir_name => {
       var dir_path = '/' + dir_name
       it(`Should pass if ${dir_name} exists`, done => {
