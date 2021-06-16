@@ -5,6 +5,10 @@ const k8s = require('@kubernetes/client-node');
 const request = require('request');
 var streamBuffers = require('stream-buffers');
 var KAAS = require('./../../utils/kaas_utils')
+var sleep = require('atomic-sleep')
+var ipAddr = require('./../../utils/getNetworkAddress')
+
+var IP = ipAddr()
 
 const cluster = {
     name: 'test',
@@ -138,6 +142,7 @@ describe('#KAASTests', function() {
         })
         it('Should return pod status', async function() {
             this.retries(10);
+            sleep(5000)
             await k8sApi.readNamespacedPod('test-hello-pod', 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
                     console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
@@ -203,6 +208,7 @@ describe('#KAASTests', function() {
             }) 
             it(`Should return NPC pod ${podname}(${podConfigs[podname].type}) status`, async function() {
                 this.retries(10);
+                sleep(5000)
                 await k8sApi.readNamespacedPod(podname, 'default').then((res) => {
                     if(res.body.status.phase.trim() != 'Running') {
                         console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
@@ -243,6 +249,7 @@ describe('#KAASTests', function() {
         })
         it('Should return true if internet side pod can ping internet', async function() {
             var command = 'ping -c3 8.8.8.8'.split(' ')
+            sleep(30000)
             await execCommand('default','cmd-test-pod', 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '3 packets received', `Policy not working.`)
             }, function(err) {
@@ -250,7 +257,7 @@ describe('#KAASTests', function() {
             })
         })
         it('Should return true if internet side pod can not ping local network', async function() {
-            var command = 'ping -c3 192.168.100.10'.split(' ')
+            var command = `ping -c3 ${IP}`.split(' ')
             await execCommand('default','cmd-test-pod', 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '0 packets received', `Policy not working.`)
             }, function(err) {
@@ -274,7 +281,7 @@ describe('#KAASTests', function() {
             })
         })
         it('Should return true if drive side pod can ping local network', async function() {
-            var command = 'ping -c3 192.168.100.10'.split(' ')
+            var command = `ping -c3 ${IP}`.split(' ')
             await execCommand('default','opc-ua-support-test-pod', 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '3 packets received', `Policy not working.`)
             }, function(err) {
@@ -298,7 +305,7 @@ describe('#KAASTests', function() {
             })
         })
         it('Should return true if internal pod can not ping local network', async function() {
-            var command = 'ping -c3 192.168.100.10'.split(' ')
+            var command = `ping -c3 ${IP}`.split(' ')
             await execCommand('default','nggw-core-test-pod', 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '0 packets received', `Policy not working.`)
             }, function(err) {
@@ -335,6 +342,18 @@ describe('#KAASTests', function() {
             }).catch(function(err) {
                 throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
             }) 
+        })
+        it(`Should return hostnetwork pod ${hostNWPod["name"]} status`, async function() {
+            this.retries(10);
+            sleep(5000)
+            await k8sApi.readNamespacedPod(hostNWPod.name, 'default').then((res) => {
+                if(res.body.status.phase.trim() != 'Running') {
+                    console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
+                }
+                expect(res.body.status.phase.trim()).to.equal('Running' , `Pos Status: ${res.body.status.phase}`)                
+            }, function(err) {
+                throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
+            })        
         })
         it('Should return true if host network pod can ping internet', async function() {
             var command = 'ping -c3 8.8.8.8'.split(' ')
@@ -383,6 +402,7 @@ describe('#KAASTests', function() {
         })
         it(`Should return true if test-pod-1 is in running state`, async function() {
             this.retries(10);
+            sleep(5000)
             await k8sApi.readNamespacedPod('test-pod-1', 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
                     console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
@@ -413,6 +433,7 @@ describe('#KAASTests', function() {
         })
         it(`Should return true if test-pod-2 is in running status state`, async function() {
             this.retries(60);
+            sleep(5000)
             await k8sApi.readNamespacedPod('test-pod-2', 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
                     console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
