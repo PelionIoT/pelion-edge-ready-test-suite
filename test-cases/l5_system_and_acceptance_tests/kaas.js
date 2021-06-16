@@ -141,7 +141,7 @@ describe('#KAASTests', function() {
             })
         })
         it('Should return pod status', async function() {
-            this.retries(10);
+            this.retries(20);
             sleep(5000)
             await k8sApi.readNamespacedPod('test-hello-pod', 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
@@ -207,7 +207,7 @@ describe('#KAASTests', function() {
                 })  
             }) 
             it(`Should return NPC pod ${podname}(${podConfigs[podname].type}) status`, async function() {
-                this.retries(10);
+                this.retries(20);
                 sleep(5000)
                 await k8sApi.readNamespacedPod(podname, 'default').then((res) => {
                     if(res.body.status.phase.trim() != 'Running') {
@@ -344,7 +344,7 @@ describe('#KAASTests', function() {
             }) 
         })
         it(`Should return hostnetwork pod ${hostNWPod["name"]} status`, async function() {
-            this.retries(10);
+            this.retries(20);
             sleep(5000)
             await k8sApi.readNamespacedPod(hostNWPod.name, 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
@@ -401,7 +401,7 @@ describe('#KAASTests', function() {
             })
         })
         it(`Should return true if test-pod-1 is in running state`, async function() {
-            this.retries(10);
+            this.retries(20);
             sleep(5000)
             await k8sApi.readNamespacedPod('test-pod-1', 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
@@ -472,7 +472,7 @@ describe('#KAASTests', function() {
     //     })
     //     npc_test_pod.forEach(function(pod) {
     //         it(`Should return NPC pod ${pod} status`, async function() {
-    //             this.retries(10);
+    //             this.retries(20);
     //             await k8sApi.readNamespacedPod(pod, 'default').then((res) => {
     //                 if(res.body.status.phase.trim() != 'Running') {
     //                     console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
