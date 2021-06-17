@@ -1,3 +1,9 @@
+var ipAddr = require('./getNetworkAddress')
+var IP = ipAddr().split('.')
+IP.pop()
+var CIDR = IP.join().replace(/,/g, '.') + '.0/24'
+
+
 module.exports.podConfig = (podname, nodename, label = {"app": "test"}, containername = "client", conatinerimage = "alpine:3.9") => {
     return {
         "apiVersion": "v1",
@@ -201,12 +207,12 @@ module.exports.denyEngressIngressNetworkWithEgressCIDRPolicy = (policyname, labe
   }
 }
 
-module.exports.internetNetworkPolicy = () => {
+module.exports.internetNetworkPolicy = (policyname) => {
   return {
     "apiVersion": "networking.k8s.io/v1",
     "kind": "NetworkPolicy",
     "metadata": {
-      "name": "internet-network-policy"
+      "name": policyname
     },
     "spec": {
       "podSelector": {
@@ -226,8 +232,7 @@ module.exports.internetNetworkPolicy = () => {
                 "cidr": "0.0.0.0/0",
                 "except": [
                   "10.240.0.0/24",
-                  "10.0.2.0/24",
-                  "192.168.100.0/24"
+                  CIDR
                 ]
               }
             }
@@ -238,12 +243,13 @@ module.exports.internetNetworkPolicy = () => {
   }
 }
 
-module.exports.driveSideNetworkPolicy = () => {
+module.exports.driveSideNetworkPolicy = (policyname) => {
+
   return {
     "apiVersion": "networking.k8s.io/v1",
     "kind": "NetworkPolicy",
     "metadata": {
-      "name": "drive-side-pod-policy"
+      "name": policyname
     },
     "spec": {
       "podSelector": {
@@ -260,7 +266,7 @@ module.exports.driveSideNetworkPolicy = () => {
           "to": [
             {
               "ipBlock": {
-                "cidr": "192.168.100.0/24"
+                "cidr": CIDR
               }
             }
           ]
@@ -270,12 +276,12 @@ module.exports.driveSideNetworkPolicy = () => {
   }
 }
 
-module.exports.internalNetworkPoloicy = () => {
+module.exports.internalNetworkPoloicy = (policyname) => {
   return {
     "apiVersion": "networking.k8s.io/v1",
     "kind": "NetworkPolicy",
     "metadata": {
-      "name": "internal-pod-policy"
+      "name": policyname
     },
     "spec": {
       "podSelector": {
@@ -291,12 +297,12 @@ module.exports.internalNetworkPoloicy = () => {
   }
 }
 
-module.exports.MQTTBrokerNetworkPolicy = () => {
+module.exports.MQTTBrokerNetworkPolicy = (policyname) => {
   return {
     "apiVersion": "networking.k8s.io/v1",
     "kind": "NetworkPolicy",
     "metadata": {
-      "name": "mqtt-broker-policy"
+      "name": policyname
     },
     "spec": {
       "podSelector": {
@@ -330,12 +336,12 @@ module.exports.MQTTBrokerNetworkPolicy = () => {
   }
 }
 
-module.exports.MQTTClientNetworkPolicy = () => {
+module.exports.MQTTClientNetworkPolicy = (policyname) => {
   return {
     "apiVersion": "networking.k8s.io/v1",
     "kind": "NetworkPolicy",
     "metadata": {
-      "name": "mqtt-client-policy"
+      "name": policyname
     },
     "spec": {
       "podSelector": {

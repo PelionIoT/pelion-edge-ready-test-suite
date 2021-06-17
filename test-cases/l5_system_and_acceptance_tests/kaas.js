@@ -8,7 +8,8 @@ var KAAS = require('./../../utils/kaas_utils')
 var sleep = require('atomic-sleep')
 var ipAddr = require('./../../utils/getNetworkAddress')
 
-var IP = ipAddr()
+// var IP = ipAddr()
+var IP = '192.168.100.10'
 
 const cluster = {
     name: 'test',
@@ -134,7 +135,7 @@ describe('#KAASTests', function() {
             });        
         })
         it('Should return true if pod is created', async function(){
-            await k8sApi.createNamespacedPod('default',KAAS.podConfig('test-hello-pod', config.internal_id)).then(function(resp) {
+            await k8sApi.createNamespacedPod('default',KAAS.podConfig('test-hello-pod' + config.internal_id, config.internal_id)).then(function(resp) {
                 assert.isObject(resp.body)
             }).catch(function(err) {
                 throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
@@ -143,7 +144,7 @@ describe('#KAASTests', function() {
         it('Should return pod status', async function() {
             this.retries(20);
             sleep(5000)
-            await k8sApi.readNamespacedPod('test-hello-pod', 'default').then((res) => {
+            await k8sApi.readNamespacedPod('test-hello-pod' + config.internal_id, 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
                     console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
                 }
@@ -153,22 +154,22 @@ describe('#KAASTests', function() {
             })        
         })
         it('Should return pod logs', async function() {
-            await k8sApi.readNamespacedPodLog('test-hello-pod', 'default').then((res) => {
+            await k8sApi.readNamespacedPodLog('test-hello-pod' + config.internal_id, 'default').then((res) => {
                 expect(res.body.trim()).to.equal('hello' , `Pos log: ${res.body} is not valid`)                
             }, function(err) {
                 throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
             });            
         })
         it('Execute command on pod', async function() {
-            await execCommand('default','test-hello-pod', 'client', ['echo', 'QA pod is up'], 2000).then(function(resp) {
+            await execCommand('default','test-hello-pod' + config.internal_id, 'client', ['echo', 'QA pod is up'], 2000).then(function(resp) {
                 assert.include(resp.trim(), 'QA pod is up', `${resp} is not matching`)
             }, function(err) {
                 throw new Error(err.message)
             })
         })
         it('Should delete pod', async function() {
-            await k8sApi.deleteNamespacedPod('test-hello-pod', 'default').then((resp) => {
-                expect(resp.body.metadata.name.trim()).to.equal('test-hello-pod', `${resp.body.metadata.name} is not deleted`)
+            await k8sApi.deleteNamespacedPod('test-hello-pod' + config.internal_id, 'default').then((resp) => {
+                expect(resp.body.metadata.name.trim()).to.equal('test-hello-pod' + config.internal_id, `${resp.body.metadata.name} is not deleted`)
             }, function (err) {
                 throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
             })
@@ -200,16 +201,16 @@ describe('#KAASTests', function() {
 
         Object.keys(podConfigs).forEach(function(podname) {
             it(`Should create NPC pod ${podname}(${podConfigs[podname].type})`, async function() {
-                await k8sApi.createNamespacedPod('default',KAAS.podConfig(podname, config.internal_id, podConfigs[podname].label)).then(function(resp) {
+                await k8sApi.createNamespacedPod('default',KAAS.podConfig(podname + config.internal_id, config.internal_id, podConfigs[podname].label)).then(function(resp) {
                     assert.isObject(resp.body)
                 }).catch(function(err) {
                     throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
                 })  
-            }) 
+            })
             it(`Should return NPC pod ${podname}(${podConfigs[podname].type}) status`, async function() {
                 this.retries(20);
                 sleep(5000)
-                await k8sApi.readNamespacedPod(podname, 'default').then((res) => {
+                await k8sApi.readNamespacedPod(podname + config.internal_id, 'default').then((res) => {
                     if(res.body.status.phase.trim() != 'Running') {
                         console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
                     }
@@ -230,15 +231,15 @@ describe('#KAASTests', function() {
         networkpolicies.forEach(function(np) {
             it(`Should create ${np} policy`, async function() {
                 if(np == "drive-side-pod-policy") {
-                    policy = KAAS.driveSideNetworkPolicy()
+                    policy = KAAS.driveSideNetworkPolicy("drive-side-pod-policy" + config.internal_id)
                 } else if(np == "internal-pod-policy") {
-                    policy = KAAS.internalNetworkPoloicy()
+                    policy = KAAS.internalNetworkPoloicy("internal-pod-policy" + config.internal_id)
                 } else if(np == "internet-network-policy") {
-                    policy = KAAS.internetNetworkPolicy()
+                    policy = KAAS.internetNetworkPolicy("internet-network-policy" + config.internal_id)
                 } else if(np == "mqtt-broker-policy") {
-                    policy = KAAS.MQTTBrokerNetworkPolicy()
+                    policy = KAAS.MQTTBrokerNetworkPolicy("mqtt-broker-policy" + config.internal_id)
                 } else {
-                    policy = KAAS.MQTTClientNetworkPolicy()
+                    policy = KAAS.MQTTClientNetworkPolicy("mqtt-client-policy" + config.internal_id)
                 }
                 await nwAPi.createNamespacedNetworkPolicy('default', policy).then(function(resp) {
                     expect(resp.response.statusCode).to.equal(201 , `Not able to create network policy. Response: ${resp}`)
@@ -250,7 +251,7 @@ describe('#KAASTests', function() {
         it('Should return true if internet side pod can ping internet', async function() {
             var command = 'ping -c3 8.8.8.8'.split(' ')
             sleep(30000)
-            await execCommand('default','cmd-test-pod', 'client', command, 20000).then(function(resp) {
+            await execCommand('default','cmd-test-pod' + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '3 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
@@ -258,15 +259,15 @@ describe('#KAASTests', function() {
         })
         it('Should return true if internet side pod can not ping local network', async function() {
             var command = `ping -c3 ${IP}`.split(' ')
-            await execCommand('default','cmd-test-pod', 'client', command, 20000).then(function(resp) {
+            await execCommand('default','cmd-test-pod' + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '0 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
             })
         })
         it('Should return true if internet side pod can not ping other pods', async function() {
-            var command = 'ping -c3 nggw-core-test-pod'.split(' ')
-            await execCommand('default','cmd-test-pod', 'client', command, 20000).then(function(resp) {
+            var command = `ping -c3 nggw-core-test-pod${config.internal_id}`.split(' ')
+            await execCommand('default','cmd-test-pod' + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '0 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
@@ -274,7 +275,7 @@ describe('#KAASTests', function() {
         })
         it('Should return true if drive side pod can not ping internet', async function() {
             var command = 'ping -c3 8.8.8.8'.split(' ')
-            await execCommand('default','opc-ua-support-test-pod', 'client', command, 20000).then(function(resp) {
+            await execCommand('default','opc-ua-support-test-pod' + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '0 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
@@ -282,15 +283,15 @@ describe('#KAASTests', function() {
         })
         it('Should return true if drive side pod can ping local network', async function() {
             var command = `ping -c3 ${IP}`.split(' ')
-            await execCommand('default','opc-ua-support-test-pod', 'client', command, 20000).then(function(resp) {
+            await execCommand('default','opc-ua-support-test-pod' + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '3 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
             })
         })
         it('Should return true if drive side pod can not ping other pods', async function() {
-            var command = 'ping -c3 nggw-core-test-pod'.split(' ')
-            await execCommand('default','opc-ua-support-test-pod', 'client', command, 20000).then(function(resp) {
+            var command = `ping -c3 nggw-core-test-pod${config.internal_id}`.split(' ')
+            await execCommand('default','opc-ua-support-test-pod' + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '0 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
@@ -298,7 +299,7 @@ describe('#KAASTests', function() {
         })
         it('Should return true if internal pod can not ping internet', async function() {
             var command = 'ping -c3 8.8.8.8'.split(' ')
-            await execCommand('default','nggw-core-test-pod', 'client', command, 20000).then(function(resp) {
+            await execCommand('default','nggw-core-test-pod' + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '0 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
@@ -306,15 +307,15 @@ describe('#KAASTests', function() {
         })
         it('Should return true if internal pod can not ping local network', async function() {
             var command = `ping -c3 ${IP}`.split(' ')
-            await execCommand('default','nggw-core-test-pod', 'client', command, 20000).then(function(resp) {
+            await execCommand('default','nggw-core-test-pod' + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '0 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
             })
         })
         it('Should return true if internal pod can not ping other pods', async function() {
-            var command = 'ping -c3 opc-ua-support-test-pod'.split(' ')
-            await execCommand('default','nggw-core-test-pod', 'client', command, 20000).then(function(resp) {
+            var command = `ping -c3 opc-ua-support-test-pod${config.internal_id}`.split(' ')
+            await execCommand('default','nggw-core-test-pod' + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '0 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
@@ -322,8 +323,8 @@ describe('#KAASTests', function() {
         })
         Object.keys(podConfigs).forEach(function(pod) {
             it(`Should delete NPC pod ${pod}`, async function() {
-                await k8sApi.deleteNamespacedPod(pod, 'default').then((resp) => {
-                    expect(resp.body.metadata.name.trim()).to.equal(pod, `${resp.body.metadata.name} is not deleted`)
+                await k8sApi.deleteNamespacedPod(pod + config.internal_id, 'default').then((resp) => {
+                    expect(resp.body.metadata.name.trim()).to.equal(pod + config.internal_id, `${resp.body.metadata.name} is not deleted`)
                 }, function (err) {
                     throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
                 })
@@ -337,7 +338,7 @@ describe('#KAASTests', function() {
             }
         }
         it('Create Pod with host network', async function() {
-            await k8sApi.createNamespacedPod('default',KAAS.podWithHostNW(hostNWPod.name, config.internal_id, hostNWPod.label)).then(function(resp) {
+            await k8sApi.createNamespacedPod('default',KAAS.podWithHostNW(hostNWPod.name + config.internal_id, config.internal_id, hostNWPod.label)).then(function(resp) {
                 assert.isObject(resp.body)
             }).catch(function(err) {
                 throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
@@ -346,7 +347,7 @@ describe('#KAASTests', function() {
         it(`Should return hostnetwork pod ${hostNWPod["name"]} status`, async function() {
             this.retries(20);
             sleep(5000)
-            await k8sApi.readNamespacedPod(hostNWPod.name, 'default').then((res) => {
+            await k8sApi.readNamespacedPod(hostNWPod.name + config.internal_id, 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
                     console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
                 }
@@ -357,22 +358,22 @@ describe('#KAASTests', function() {
         })
         it('Should return true if host network pod can ping internet', async function() {
             var command = 'ping -c3 8.8.8.8'.split(' ')
-            await execCommand('default', hostNWPod.name, 'client', command, 20000).then(function(resp) {
+            await execCommand('default', hostNWPod.name + config.internal_id, 'client', command, 20000).then(function(resp) {
                 assert.include(resp, '3 packets received', `Policy not working.`)
             }, function(err) {
                 throw new Error(err.message)
             })
         })
         it(`Should delete host network pod ${hostNWPod.name}`, async function() {
-            await k8sApi.deleteNamespacedPod(hostNWPod.name, 'default').then((resp) => {
-                expect(resp.body.metadata.name.trim()).to.equal(hostNWPod.name, `${resp.body.metadata.name} is not deleted`)
+            await k8sApi.deleteNamespacedPod(hostNWPod.name + config.internal_id, 'default').then((resp) => {
+                expect(resp.body.metadata.name.trim()).to.equal(hostNWPod.name + config.internal_id, `${resp.body.metadata.name} is not deleted`)
             }, function (err) {
                 throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
             })
         }) 
         networkpolicies.forEach(function(np) {
             it(`Should delete ${np} policy`, async function() {
-                await nwAPi.deleteNamespacedNetworkPolicy(np, 'default').then(function(resp) {
+                await nwAPi.deleteNamespacedNetworkPolicy(np + config.internal_id, 'default').then(function(resp) {
                     expect(resp.response.statusCode).to.equal(200 , `Pos log: ${resp} is not valid`)
                 }, function(err) {
                     throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
@@ -393,7 +394,7 @@ describe('#KAASTests', function() {
         }
         Object.keys(sameHostnamePodCOnfig).forEach(function(pod) {
             it(`Create Pod ${pod} with same hostname`, async function() {
-                await k8sApi.createNamespacedPod('default',KAAS.podWithFixHostname(pod, config.internal_id, sameHostnamePodCOnfig[pod].label)).then(function(resp) {
+                await k8sApi.createNamespacedPod('default',KAAS.podWithFixHostname(pod + config.internal_id, config.internal_id, sameHostnamePodCOnfig[pod].label)).then(function(resp) {
                     assert.isObject(resp.body)
                 }).catch(function(err) {
                     throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
@@ -403,7 +404,7 @@ describe('#KAASTests', function() {
         it(`Should return true if test-pod-1 is in running state`, async function() {
             this.retries(20);
             sleep(5000)
-            await k8sApi.readNamespacedPod('test-pod-1', 'default').then((res) => {
+            await k8sApi.readNamespacedPod('test-pod-1' + config.internal_id, 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
                     console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
                 }
@@ -414,7 +415,7 @@ describe('#KAASTests', function() {
         })
         it(`Should return true if test-pod-2 is in pending status state`, async function() {
             setTimeout(async function() {
-                await k8sApi.readNamespacedPod('test-pod-2', 'default').then((res) => {
+                await k8sApi.readNamespacedPod('test-pod-2' + config.internal_id, 'default').then((res) => {
                     if(res.body.status.phase.trim() != 'Pending') {
                         console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
                     }
@@ -425,8 +426,8 @@ describe('#KAASTests', function() {
             }, 10000)        
         })
         it(`Should return true if test-pod-1 is deleted`, async function() {
-            await k8sApi.deleteNamespacedPod('test-pod-1', 'default').then((resp) => {
-                expect(resp.body.metadata.name.trim()).to.equal('test-pod-1', `${resp.body.metadata.name} is not deleted`)
+            await k8sApi.deleteNamespacedPod('test-pod-1' + config.internal_id, 'default').then((resp) => {
+                expect(resp.body.metadata.name.trim()).to.equal('test-pod-1' + config.internal_id, `${resp.body.metadata.name} is not deleted`)
             }, function (err) {
                 throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
             })        
@@ -434,7 +435,7 @@ describe('#KAASTests', function() {
         it(`Should return true if test-pod-2 is in running status state`, async function() {
             this.retries(60);
             sleep(5000)
-            await k8sApi.readNamespacedPod('test-pod-2', 'default').then((res) => {
+            await k8sApi.readNamespacedPod('test-pod-2' + config.internal_id, 'default').then((res) => {
                 if(res.body.status.phase.trim() != 'Running') {
                     console.log('Pod Status ' + res.body.status.phase.trim() + '. Retrying...')
                 }
@@ -444,8 +445,8 @@ describe('#KAASTests', function() {
             })        
         })
         it(`Should return true if test-pod-2 is deleted`, async function() {
-            await k8sApi.deleteNamespacedPod('test-pod-2', 'default').then((resp) => {
-                expect(resp.body.metadata.name.trim()).to.equal('test-pod-2', `${resp.body.metadata.name} is not deleted`)
+            await k8sApi.deleteNamespacedPod('test-pod-2' + config.internal_id, 'default').then((resp) => {
+                expect(resp.body.metadata.name.trim()).to.equal('test-pod-2' + config.internal_id, `${resp.body.metadata.name} is not deleted`)
             }, function (err) {
                 throw new Error(err.response.body.message + ". Error code:" + err.response.body.code)
             })        
