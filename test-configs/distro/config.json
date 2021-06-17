@@ -1,0 +1,159 @@
+{
+    "title": "pelion-edge-ready-test-suite",
+    "version": "2.0.0",
+    "tests_directory": "test-cases",
+    "accountID": "<Pelion Cloud Account ID>",
+    "internal_id": "<Pelion Cloud Internal ID>",
+    "access_key": "<Pelion Cloud Access Key>",
+    "test_cases": [
+      "test-cases/l1_file_system_and_specification_tests/slashDirectory.js",
+      "test-cases/l1_file_system_and_specification_tests/specifications.js",
+      "test-cases/l1_file_system_and_specification_tests/partition.js",
+      "test-cases/l2_program_tests/program_and_services.js",
+      "test-cases/l3_internet_and_connectivity_tests/network_and_connectivity.js",
+      "test-cases/l4_smoke_tests/edge_smoke.js",
+      "test-cases/l4_smoke_tests/kaas_smoke.js",
+      "test-cases/l5_system_and_acceptance_tests/system_and_acceptance_tests.js"
+    ],
+    "edge_build_type": "distro",
+    "device_type": "linux",
+    "mocha_timeout": 60000,
+    "log_level": 5,
+    "throttle_rate": 500,
+    "create_virtual_devices": false,
+    "generate_detailed_report": true,
+    "internal_server_port": {
+      "edge_core_port": 9101,
+      "enterprise_server_port": 8080
+    },
+    "specifications": {
+      "minimum_cpu_core": 1,
+      "min_cpu_freq": 400000,
+      "max_cpu_freq": 4200000,
+      "device_mem": {
+        "MemTotal": 900000,
+        "MemFree": 30000,
+        "MemAvailable": 400000
+      },
+      "entropy": 200,
+      "revision_number": "a020d3",
+      "SOC_die_temprature": 80,
+      "ledConfig": "01",
+      "radioConfig": "00",
+      "hardwareVersion": "rpi3bplus",
+      "apiAddress": "https://api.us-east-1.mbedcloud.com",
+      "gatewayServicesAddress": "https://gateways.us-east-1.mbedcloud.com"
+    },
+    "interface": {
+      "wired": "eth0"
+    },
+    "connectivity_dns": [
+      "google.com",
+      "api.us-east-1.mbedcloud.com",
+      "gateways.us-east-1.mbedcloud.com",
+      "edge-k8s.us-east-1.mbedcloud.com",
+      "lwm2m.us-east-1.mbedcloud.com"
+    ],
+    "config_path": {
+      "identityJSON": "/var/lib/pelion/edge_gw_identity/identity.json",
+      "mcc_config_working": "/var/lib/pelion/mbed/mcc_config/WORKING",
+      "mcc_config_backup": "/var/lib/pelion/mbed/mcc_config/BACKUP",
+      "maestro_config": "/var/lib/pelion/maestro/maestroConfig.db",
+      "relay_term_config": "/etc/pelion/relay-term-config.json",
+      "device_db_yaml_config": "/etc/pelion/devicedb.yaml",
+      "nw_addr_order_conf": "/etc/gai.conf"
+    },
+    "binary_path": {
+      "edge_core": "/usr/bin/edge-core"
+    },
+    "program_version": {
+      "maestro": "0.1.0",
+      "docker": "19.03.12-ce",
+      "openssh": "OpenSSH_8.2p1",
+      "openssl": "1.1.1",
+      "node": "8.17.0",
+      "npm": "6.13.4",
+      "edge_core": "0.12.0",
+      "go": "1.14.4",
+      "kernel": "5.8.0-44-generic"
+    },
+    "partitions": {
+      "udev": {
+        "name": "Dev",
+        "size": "476M"
+      }
+    },
+    "fileSystem": [
+      "bin",
+      "boot",
+      "dev",
+      "etc",
+      "home",
+      "lib",
+      "media",
+      "mnt",
+      "opt",
+      "proc",
+      "run",
+      "sbin",
+      "sys",
+      "tmp",
+      "usr",
+      "var/lib/pelion",
+      "etc/pelion"
+    ],
+    "drivers": [
+      "auxdisplay",
+      "block",
+      "clk",
+      "gpio",
+      "hid",
+      "i2c",
+      "input",
+      "md",
+      "mfd",
+      "mmc",
+      "mux",
+      "power",
+      "pwm",
+      "rtc",
+      "spi",
+      "staging",
+      "uio",
+      "video",
+      "watchdog",
+      "bcma",
+      "bluetooth",
+      "char",
+      "extcon",
+      "gpu",
+      "hwmon",
+      "iio",
+      "leds",
+      "media",
+      "misc",
+      "mtd",
+      "net",
+      "pinctrl",
+      "pps",
+      "regulator",
+      "scsi",
+      "ssb",
+      "tty",
+      "usb",
+      "w1"
+    ],
+    "drivers_path": "/lib/modules/5.8.0-44-generic/kernel/drivers",
+    "services": [
+      "docker.service",
+      "devicedb.service",
+      "edge-core.service",
+      "edge-proxy.service",
+      "kubelet.service",
+      "maestro.service",
+      "pelion-relay-term.service",
+      "mbed-fcc.service",
+      "wait-for-pelion-identity.service"
+    ]
+  }
+  
