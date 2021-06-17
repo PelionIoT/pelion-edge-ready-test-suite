@@ -78,9 +78,9 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
   })
   describe('#SystemLogsFluentBitTests', () => {
     it('It should update fluent bit config', function (done) {
-      if (global.config.edge_build_type == 'snap') {
+      if (global.config.edge_build_type == 'snap' || global.config.edge_build_type == 'distro') {
         this.skip()
-      }
+      } 
       updateConfigWithTestData(50)
       setTimeout(() => {
         exec(
@@ -103,7 +103,7 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
       }, 5000)
     })
     it('It should return true if fluent bit service is running', function (done) {
-      if (global.config.edge_build_type == 'snap') {
+      if (global.config.edge_build_type == 'snap' || global.config.edge_build_type == 'distro') {
         this.skip()
       }
       setTimeout(() => {
@@ -122,7 +122,7 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
       }, 20000)
     })
     it('It should return true if original config is updated again', function (done) {
-      if (global.config.edge_build_type == 'snap') {
+      if (global.config.edge_build_type == 'snap' || global.config.edge_build_type == 'distro') {
         this.skip()
       }
       exec(
@@ -159,7 +159,7 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
       )
     })
     it('It should return true if fluent bit logs updated in the cloud', function (done) {
-      if (global.config.edge_build_type == 'snap') {
+      if (global.config.edge_build_type == 'snap' || global.config.edge_build_type == 'distro') {
         this.skip()
       }
       var options = {
