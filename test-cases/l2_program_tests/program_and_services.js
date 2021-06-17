@@ -104,7 +104,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
           done(error)
         } else {
           assert.equal(
-            stderr.split(',')[0],
+            stderr.split(' ')[0],
             global.config.program_version.openssh,
             'SSH version not valid'
           )
