@@ -27,7 +27,7 @@ var cmd = ''
 describe('[Level 2] ServicesAndProgramExistanceTests', () => {
   describe('#ProgramVersion', () => {
     it('Should return true if valid maestro version is present', function (done) {
-      if (global.config.edge_build_type == 'snap') {
+      if (global.config.edge_build_type == 'snap' || global.config.edge_build_type == 'distro') {
         this.skip()
       }
       exec(
@@ -168,7 +168,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
       })
     })
     it('Should return true if valid Fluent-bit version is present', function (done) {
-      if (global.config.edge_build_type == 'snap') {
+      if (global.config.edge_build_type == 'snap' || global.config.edge_build_type == 'distro') {
         this.skip()
       }
       exec(
