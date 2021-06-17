@@ -8,8 +8,7 @@ var KAAS = require('./../../utils/kaas_utils')
 var sleep = require('atomic-sleep')
 var ipAddr = require('./../../utils/getNetworkAddress')
 
-// var IP = ipAddr()
-var IP = '192.168.100.10'
+var IP = ipAddr()
 
 const cluster = {
     name: 'test',
