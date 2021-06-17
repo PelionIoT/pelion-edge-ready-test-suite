@@ -47,7 +47,7 @@
       "lwm2m.us-east-1.mbedcloud.com"
     ],
     "config_path": {
-      "identityJSON": "/var/lib/pelion/edge_gw_identity/identity.json",
+      "identityJSON": "/var/lib/pelion/edge_gw_config/identity.json",
       "mcc_config_working": "/var/lib/pelion/mbed/mcc_config/WORKING",
       "mcc_config_backup": "/var/lib/pelion/mbed/mcc_config/BACKUP",
       "maestro_config": "/var/lib/pelion/maestro/maestroConfig.db",
