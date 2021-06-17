@@ -216,12 +216,14 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
     })
   })
   describe('#DriversExistance', () => {
-    global.config.drivers.forEach(driver => {
-      var dir_path = `${global.config.drivers_path}/${driver}`
-      it(`Should pass if driver ${driver} exists`, function (done) {
-        assert.equal(fs.existsSync(dir_path), true, `${dir_path} not exist`)
-        done()
+    if (global.config.edge_build_type != 'distro') {
+      global.config.drivers.forEach(driver => {
+        var dir_path = `${global.config.drivers_path}/${driver}`
+        it(`Should pass if driver ${driver} exists`, function (done) {
+          assert.equal(fs.existsSync(dir_path), true, `${dir_path} not exist`)
+          done()
+        })
       })
-    })
+    }
   })
 })
