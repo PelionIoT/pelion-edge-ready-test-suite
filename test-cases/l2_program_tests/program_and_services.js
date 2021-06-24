@@ -76,7 +76,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         this.skip()
       }
       exec(
-        "openssl version | cut -d'g' -f1 | awk '{print $2}' | tr -d aij",
+        "openssl version | cut -d' ' -f2 | sed 's/[a-z]$//'",
         (error, stdout) => {
           if (error) {
             done(error)

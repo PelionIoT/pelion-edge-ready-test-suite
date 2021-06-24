@@ -34,7 +34,7 @@ describe('[Level 4] EdgeCoreTests', () => {
             assert.equal(
               edge_core_info['status'],
               'connected',
-              `Edge core is not conncted. Err: ${edge_core_info}`
+              `Edge core is not connected. Err: ${edge_core_info}`
             )
             assert.equal(
               edge_core_info['account-id'],
