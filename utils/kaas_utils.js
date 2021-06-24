@@ -1,203 +1,218 @@
+/*
+ * Copyright (c) 2020-2021, Pelion and affiliates.
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 var ipAddr = require('./getNetworkAddress')
 var IP = ipAddr().split('.')
 IP.pop()
 var CIDR = IP.join().replace(/,/g, '.') + '.0/24'
 
-
-module.exports.podConfig = (podname, nodename, label = {"app": "test"}, containername = "client", conatinerimage = "alpine:3.9") => {
-    return {
-        "apiVersion": "v1",
-        "kind": "Pod",
-        "metadata": {
-          "name": podname,
-          "labels": label
-        },
-        "spec": {
-          "automountServiceAccountToken": false,
-          "hostname": podname,
-          "nodeName": nodename,
-          "containers": [
-            {
-              "name": containername,
-              "image": conatinerimage,
-              "command": [
-                "/bin/sh"
-              ],
-              "args": [
-                "-c",
-                "echo 'hello'; sleep 6000000"
-              ]
-            }
-          ]
-        }
-    }
-}
-
-module.exports.podWithHostNW = (podname, nodename, label = {"app": "test"}, containername = "client", conatinerimage = "alpine:3.9") => {
+module.exports.podConfig = (
+  podname,
+  nodename,
+  label = { app: 'test' },
+  containername = 'client',
+  conatinerimage = 'alpine:3.9'
+) => {
   return {
-    "apiVersion": "v1",
-    "kind": "Pod",
-    "metadata": {
-      "name": podname,
-      "labels": label
+    apiVersion: 'v1',
+    kind: 'Pod',
+    metadata: {
+      name: podname,
+      labels: label
     },
-    "spec": {
-      "hostNetwork": true,
-      "automountServiceAccountToken": false,
-      "hostname": podname,
-      "nodeName": nodename,
-      "containers": [
+    spec: {
+      automountServiceAccountToken: false,
+      hostname: podname,
+      nodeName: nodename,
+      containers: [
         {
-          "name": containername,
-          "image": conatinerimage,
-          "command": [
-            "/bin/sh"
-          ],
-          "args": [
-            "-c",
-            "echo 'hello'; sleep 6000000"
-          ]
+          name: containername,
+          image: conatinerimage,
+          command: ['/bin/sh'],
+          args: ['-c', "echo 'hello'; sleep 6000000"]
         }
       ]
     }
   }
 }
 
-module.exports.podWithFixHostname = (podname, nodename, label = {"app": "test"}, containername = "client", conatinerimage = "alpine:3.9") => {
+module.exports.podWithHostNW = (
+  podname,
+  nodename,
+  label = { app: 'test' },
+  containername = 'client',
+  conatinerimage = 'alpine:3.9'
+) => {
   return {
-    "apiVersion": "v1",
-    "kind": "Pod",
-    "metadata": {
-      "name": podname,
-      "labels": label
+    apiVersion: 'v1',
+    kind: 'Pod',
+    metadata: {
+      name: podname,
+      labels: label
     },
-    "spec": {
-      "automountServiceAccountToken": false,
-      "hostname": 'test-hostname',
-      "nodeName": nodename,
-      "containers": [
+    spec: {
+      hostNetwork: true,
+      automountServiceAccountToken: false,
+      hostname: podname,
+      nodeName: nodename,
+      containers: [
         {
-          "name": containername,
-          "image": conatinerimage,
-          "command": [
-            "/bin/sh"
-          ],
-          "args": [
-            "-c",
-            "echo 'hello'; sleep 6000000"
-          ]
+          name: containername,
+          image: conatinerimage,
+          command: ['/bin/sh'],
+          args: ['-c', "echo 'hello'; sleep 6000000"]
         }
       ]
     }
   }
 }
 
-module.exports.denyEgressNetworkPolicy = (policyname, label = "test") => {
-    return {
-        "apiVersion": "networking.k8s.io/v1",
-        "kind": "NetworkPolicy",
-        "metadata": {
-            "name": policyname,
-        },
-        "spec": {
-            "podSelector": {
-                "matchLabels": {
-                    "app": label
-                }
-            },
-            "policyTypes": [
-                "Egress",
-            ]
-        }
-    }
-}
-
-module.exports.denyIngressNetworkPolicy = (policyname, label = "test") => {
-    return {
-        "apiVersion": "networking.k8s.io/v1",
-        "kind": "NetworkPolicy",
-        "metadata": {
-            "name": policyname
-        },
-        "spec": {
-            "podSelector": {
-                "matchLabels": {
-                    "app": label
-                }
-            },
-            "policyTypes": [
-                "Ingress"
-            ]
-        }
-    }   
-}
-
-module.exports.denyEngressIngressNetworkPolicy = (policyname, label = "test") => {
-    return {
-        "apiVersion": "networking.k8s.io/v1",
-        "kind": "NetworkPolicy",
-        "metadata": {
-            "name": policyname
-        },
-        "spec": {
-            "podSelector": {
-                "matchLabels": {
-                    "app": label
-                }
-            },
-            "policyTypes": [
-                "Egress",
-                "Ingress"
-            ]
-        }
-    } 
-}
-
-module.exports.denyEngressIngressNetworkPolicy = (policyname, label = "test") => {
+module.exports.podWithFixHostname = (
+  podname,
+  nodename,
+  label = { app: 'test' },
+  containername = 'client',
+  conatinerimage = 'alpine:3.9'
+) => {
   return {
-    "apiVersion": "networking.k8s.io/v1",
-    "kind": "NetworkPolicy",
-    "metadata": {
-      "name": policyname,
-      "namespace": "default"
+    apiVersion: 'v1',
+    kind: 'Pod',
+    metadata: {
+      name: podname,
+      labels: label
     },
-    "spec": {
-      "podSelector": {
-        "matchLabels": {
-          "app": label
+    spec: {
+      automountServiceAccountToken: false,
+      hostname: 'test-hostname',
+      nodeName: nodename,
+      containers: [
+        {
+          name: containername,
+          image: conatinerimage,
+          command: ['/bin/sh'],
+          args: ['-c', "echo 'hello'; sleep 6000000"]
+        }
+      ]
+    }
+  }
+}
+
+module.exports.denyEgressNetworkPolicy = (policyname, label = 'test') => {
+  return {
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          app: label
         }
       },
-      "policyTypes": [
-        "Ingress",
-        "Egress"
-      ]
+      policyTypes: ['Egress']
     }
   }
 }
 
-module.exports.denyEngressIngressNetworkWithEgressCIDRPolicy = (policyname, label = "test") => {
+module.exports.denyIngressNetworkPolicy = (policyname, label = 'test') => {
   return {
-    "apiVersion": "networking.k8s.io/v1",
-    "kind": "NetworkPolicy",
-    "metadata": {
-      "name": policyname
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname
     },
-    "spec": {
-      "podSelector": {
-        "matchLabels": {
-          "app": label
+    spec: {
+      podSelector: {
+        matchLabels: {
+          app: label
         }
       },
-      "policyTypes": [
-        "Egress",
-        "Ingress"
-      ],
-      "egress": [
+      policyTypes: ['Ingress']
+    }
+  }
+}
+
+module.exports.denyEngressIngressNetworkPolicy = (
+  policyname,
+  label = 'test'
+) => {
+  return {
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          app: label
+        }
+      },
+      policyTypes: ['Egress', 'Ingress']
+    }
+  }
+}
+
+module.exports.denyEngressIngressNetworkPolicy = (
+  policyname,
+  label = 'test'
+) => {
+  return {
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname,
+      namespace: 'default'
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          app: label
+        }
+      },
+      policyTypes: ['Ingress', 'Egress']
+    }
+  }
+}
+
+module.exports.denyEngressIngressNetworkWithEgressCIDRPolicy = (
+  policyname,
+  label = 'test'
+) => {
+  return {
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          app: label
+        }
+      },
+      policyTypes: ['Egress', 'Ingress'],
+      egress: [
         {
-          "to": [
+          to: [
             {
-              "ipBlock": {
-                "cidr": "0.0.0.0/0"
+              ipBlock: {
+                cidr: '0.0.0.0/0'
               }
             }
           ]
@@ -207,33 +222,27 @@ module.exports.denyEngressIngressNetworkWithEgressCIDRPolicy = (policyname, labe
   }
 }
 
-module.exports.internetNetworkPolicy = (policyname) => {
+module.exports.internetNetworkPolicy = policyname => {
   return {
-    "apiVersion": "networking.k8s.io/v1",
-    "kind": "NetworkPolicy",
-    "metadata": {
-      "name": policyname
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname
     },
-    "spec": {
-      "podSelector": {
-        "matchLabels": {
-          "role": "internet-pod"
+    spec: {
+      podSelector: {
+        matchLabels: {
+          role: 'internet-pod'
         }
       },
-      "policyTypes": [
-        "Egress",
-        "Ingress"
-      ],
-      "egress": [
+      policyTypes: ['Egress', 'Ingress'],
+      egress: [
         {
-          "to": [
+          to: [
             {
-              "ipBlock": {
-                "cidr": "0.0.0.0/0",
-                "except": [
-                  "10.240.0.0/24",
-                  CIDR
-                ]
+              ipBlock: {
+                cidr: '0.0.0.0/0',
+                except: ['10.240.0.0/24', CIDR]
               }
             }
           ]
@@ -243,30 +252,26 @@ module.exports.internetNetworkPolicy = (policyname) => {
   }
 }
 
-module.exports.driveSideNetworkPolicy = (policyname) => {
-
+module.exports.driveSideNetworkPolicy = policyname => {
   return {
-    "apiVersion": "networking.k8s.io/v1",
-    "kind": "NetworkPolicy",
-    "metadata": {
-      "name": policyname
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname
     },
-    "spec": {
-      "podSelector": {
-        "matchLabels": {
-          "role": "drive-side-pod"
+    spec: {
+      podSelector: {
+        matchLabels: {
+          role: 'drive-side-pod'
         }
       },
-      "policyTypes": [
-        "Egress",
-        "Ingress"
-      ],
-      "egress": [
+      policyTypes: ['Egress', 'Ingress'],
+      egress: [
         {
-          "to": [
+          to: [
             {
-              "ipBlock": {
-                "cidr": CIDR
+              ipBlock: {
+                cidr: CIDR
               }
             }
           ]
@@ -276,58 +281,53 @@ module.exports.driveSideNetworkPolicy = (policyname) => {
   }
 }
 
-module.exports.internalNetworkPoloicy = (policyname) => {
+module.exports.internalNetworkPoloicy = policyname => {
   return {
-    "apiVersion": "networking.k8s.io/v1",
-    "kind": "NetworkPolicy",
-    "metadata": {
-      "name": policyname
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname
     },
-    "spec": {
-      "podSelector": {
-        "matchLabels": {
-          "role": "internal-pod"
+    spec: {
+      podSelector: {
+        matchLabels: {
+          role: 'internal-pod'
         }
       },
-      "policyTypes": [
-        "Egress",
-        "Ingress"
-      ]
+      policyTypes: ['Egress', 'Ingress']
     }
   }
 }
 
-module.exports.MQTTBrokerNetworkPolicy = (policyname) => {
+module.exports.MQTTBrokerNetworkPolicy = policyname => {
   return {
-    "apiVersion": "networking.k8s.io/v1",
-    "kind": "NetworkPolicy",
-    "metadata": {
-      "name": policyname
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname
     },
-    "spec": {
-      "podSelector": {
-        "matchLabels": {
-          "mqtt": "broker"
+    spec: {
+      podSelector: {
+        matchLabels: {
+          mqtt: 'broker'
         }
       },
-      "policyTypes": [
-        "Ingress"
-      ],
-      "ingress": [
+      policyTypes: ['Ingress'],
+      ingress: [
         {
-          "from": [
+          from: [
             {
-              "podSelector": {
-                "matchLabels": {
-                  "mqtt": "client"
+              podSelector: {
+                matchLabels: {
+                  mqtt: 'client'
                 }
               }
             }
           ],
-          "ports": [
+          ports: [
             {
-              "protocol": "TCP",
-              "port": 1883
+              protocol: 'TCP',
+              port: 1883
             }
           ]
         }
@@ -336,37 +336,35 @@ module.exports.MQTTBrokerNetworkPolicy = (policyname) => {
   }
 }
 
-module.exports.MQTTClientNetworkPolicy = (policyname) => {
+module.exports.MQTTClientNetworkPolicy = policyname => {
   return {
-    "apiVersion": "networking.k8s.io/v1",
-    "kind": "NetworkPolicy",
-    "metadata": {
-      "name": policyname
+    apiVersion: 'networking.k8s.io/v1',
+    kind: 'NetworkPolicy',
+    metadata: {
+      name: policyname
     },
-    "spec": {
-      "podSelector": {
-        "matchLabels": {
-          "mqtt": "client"
+    spec: {
+      podSelector: {
+        matchLabels: {
+          mqtt: 'client'
         }
       },
-      "policyTypes": [
-        "Egress"
-      ],
-      "egress": [
+      policyTypes: ['Egress'],
+      egress: [
         {
-          "to": [
+          to: [
             {
-              "podSelector": {
-                "matchLabels": {
-                  "mqtt": "broker"
+              podSelector: {
+                matchLabels: {
+                  mqtt: 'broker'
                 }
               }
             }
           ],
-          "ports": [
+          ports: [
             {
-              "protocol": "TCP",
-              "port": 1883
+              protocol: 'TCP',
+              port: 1883
             }
           ]
         }
