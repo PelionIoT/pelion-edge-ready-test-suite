@@ -78,9 +78,6 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
   })
   describe('#SystemLogsFluentBitTests', () => {
     it('It should update fluent bit config', function (done) {
-      if (global.config.edge_build_type == 'snap') {
-        this.skip()
-      }
       updateConfigWithTestData(50)
       setTimeout(() => {
         exec(
@@ -103,9 +100,6 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
       }, 5000)
     })
     it('It should return true if fluent bit service is running', function (done) {
-      if (global.config.edge_build_type == 'snap') {
-        this.skip()
-      }
       setTimeout(() => {
         exec(`systemctl status td-agent-bit`, (error, stdout) => {
           if (error) {
@@ -122,9 +116,6 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
       }, 20000)
     })
     it('It should return true if original config is updated again', function (done) {
-      if (global.config.edge_build_type == 'snap') {
-        this.skip()
-      }
       exec(
         `./scripts/swap_td_config.sh && cat ${
           global.config.config_path.td_agent_bit_conf
@@ -159,9 +150,6 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
       )
     })
     it('It should return true if fluent bit logs updated in the cloud', function (done) {
-      if (global.config.edge_build_type == 'snap') {
-        this.skip()
-      }
       var options = {
         method: 'GET',
         url:
