@@ -215,13 +215,45 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
       })
     })
   })
-  describe('#DriversExistance', () => {
-    global.config.drivers.forEach(driver => {
-      var dir_path = `${global.config.drivers_path}/${driver}`
-      it(`Should pass if driver ${driver} exists`, function (done) {
-        assert.equal(fs.existsSync(dir_path), true, `${dir_path} not exist`)
-        done()
+  describe('#KernalModules', () => {
+    var karnal_modules_config = [
+      "CONFIG_IP_SET=m",
+      "CONFIG_IP_SET_MAX=256",
+      "CONFIG_IP_SET_BITMAP_IP=m",
+      "CONFIG_IP_SET_BITMAP_IPMAC=m",
+      "CONFIG_IP_SET_BITMAP_PORT=m",
+      "CONFIG_IP_SET_HASH_IP=m",
+      "CONFIG_IP_SET_HASH_IPMARK=m",
+      "CONFIG_IP_SET_HASH_IPPORT=m",
+      "CONFIG_IP_SET_HASH_IPPORTIP=m",
+      "CONFIG_IP_SET_HASH_IPPORTNET=m",
+      "CONFIG_IP_SET_HASH_IPMAC=m",
+      "CONFIG_IP_SET_HASH_MAC=m",
+      "CONFIG_IP_SET_HASH_NETPORTNET=m",
+      "CONFIG_IP_SET_HASH_NET=m",
+      "CONFIG_IP_SET_HASH_NETNET=m",
+      "CONFIG_IP_SET_HASH_NETPORT=m",
+      "CONFIG_IP_SET_HASH_NETIFACE=m",
+      "CONFIG_IP_SET_LIST_SET=m"
+  ]
+  karnal_modules_config.forEach(module_config => {
+    it(`Should return true if ${module_config} exist`, (done) => {
+      exec('zcat /proc/config.gz | grep CONFIG_IP_SET', (error, stdout, stderr) => {
+        if (error) {
+          done(error)
+        } else {
+          assert.include(
+            stdout.trim(),
+            module_config,
+            `${module_config} is not present`
+          )
+          done()
+        }
       })
     })
+  })
+    // exec('cmd', (error, stdout) => {
+
+    // })
   })
 })
