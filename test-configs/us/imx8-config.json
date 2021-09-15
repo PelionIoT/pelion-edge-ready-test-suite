@@ -39,7 +39,7 @@
         "SOC_die_temprature": 80,
         "ledConfig": "01",
         "radioConfig": "00",
-        "hardwareVersion": "FSL_i.MX8MM_EVK_board",
+        "hardwareVersion": "SolidRun_i.MX8MM_HummingBoard_Pulse",
         "apiAddress":"https://api.us-east-1.mbedcloud.com",
         "gatewayServicesAddress":"https://gateways.us-east-1.mbedcloud.com",
         "kaasServicesAddress": "https://edge-k8s.us-east-1.mbedcloud.com"
