@@ -252,8 +252,5 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
       })
     })
   })
-    // exec('cmd', (error, stdout) => {
-
-    // })
   })
 })
