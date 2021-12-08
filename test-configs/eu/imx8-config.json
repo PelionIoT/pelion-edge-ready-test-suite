@@ -39,7 +39,7 @@
         "SOC_die_temprature": 80,
         "ledConfig": "01",
         "radioConfig": "00",
-        "hardwareVersion": "FSL_i.MX8MM_EVK_board",
+        "hardwareVersion": "SolidRun_i.MX8MM_HummingBoard_Pulse",
         "apiAddress":"https://api.eu-west-1.mbedcloud.com",
         "gatewayServicesAddress":"https://gateways.eu-west-1.mbedcloud.com",
         "kaasServicesAddress": "https://edge-k8s.eu-west-1.mbedcloud.com"
@@ -75,11 +75,11 @@
         "td-agent-bit": "1.3.5"
     },
     "partitions": {
-        "/dev/mmcblk1p2": {
+        "/dev/disk/by-label/otaroot": {
             "name": "Sysroot",
             "size": "2.4G"
         },
-        "/dev/mmcblk2p1": {
+        "/dev/mmcblk1p1": {
             "name": "Boot",
             "size": "84M"
         },
@@ -111,30 +111,6 @@
         "var",
         "wigwag"
     ],
-    "drivers_path": "/lib/modules/5.4.104-lmp-standard/kernel/drivers",
-    "drivers": [
-        "bcma",
-        "block",
-        "bluetooth",
-        "char",
-        "crypto",
-        "devfreq",
-        "gpu",
-        "hid",
-        "i2c",
-        "input",
-        "leds",
-        "md",
-        "media",
-        "misc",
-        "net",
-        "rpmsg",
-        "spi",
-        "ssb",
-        "staging",
-        "usb",
-        "watchdog"
-  ],
   "services": [
         "edge-core",
         "kubelet",
