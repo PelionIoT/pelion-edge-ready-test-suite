@@ -19,7 +19,7 @@
 
 
 # Install kubectl
-curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/arm/kubectl"
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.14.3/bin/linux/arm/kubectl"
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
 kubectl version --client
