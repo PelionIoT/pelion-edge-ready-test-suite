@@ -17,6 +17,15 @@
 # limitations under the License.
 # ----------------------------------------------------------------------------
 
+# Stop on errors
+set -e
+
+if [ $# -ne 2 ];
+then
+    echo "ERROR - incorrect number of arguments. Usage:"
+    echo " ./install_kubectl.sh <api_url> <api_key>"
+    exit 2
+fi
 
 # Install kubectl
 curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/arm/kubectl"
@@ -25,7 +34,13 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 kubectl version --client
 
 # Setup kube config
-mkdir ~/.kube
+if [ -d "$HOME"/.kube ];
+then
+    echo "$HOME"/.kube folder alredy exists, removing it.
+    rm -rf "$HOME"/.kube
+fi
+
+mkdir "$HOME"/.kube
 echo "apiVersion: v1
 clusters:
 - cluster:
@@ -42,7 +57,4 @@ preferences: {}
 users:
 - name: edge-k8s
   user:
-    token: $2" >> ~/.kube/config
-
-# How to run
-# ./install_kubectl.sh <api_url> <api_key>
+    token: $2" >> "$HOME"/.kube/config
