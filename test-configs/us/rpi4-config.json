@@ -66,12 +66,12 @@
     },
     "program_version": {
         "maestro": "0.1.0",
-        "docker": "19.03.13-ce",
-        "openssh": "OpenSSH_8.3p1",
-        "openssl": "1.1.1",
-        "node": "12.19.0",
-        "edge_core": "0.15.0",
-        "kernel": "5.10.17-lmp-standard",
+        "docker": "20.10.10",
+        "openssh": "OpenSSH_8.5p1",
+        "openssl": "1.1.1l",
+        "node": "16.13.0",
+        "edge_core": "0.19.1",
+        "kernel": "5.10.31-lmp-standard",
         "td-agent-bit": "1.3.5"
     },
     "partitions": {
@@ -111,7 +111,7 @@
         "var",
         "wigwag"
     ],
-    "drivers_path": "/lib/modules/5.10.17-lmp-standard/kernel/drivers",
+    "drivers_path": "/lib/modules/5.10.31-lmp-standard/kernel/drivers",
     "drivers": [
         "block",
         "bluetooth",
