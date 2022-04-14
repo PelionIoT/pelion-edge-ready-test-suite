@@ -40,7 +40,6 @@
         "SOC_die_temprature": 80,
         "ledConfig": "01",
         "radioConfig": "00",
-        "hardwareVersion": "rpi3bplus",
         "apiAddress":"https://api.us-east-1.mbedcloud.com",
         "gatewayServicesAddress":"https://gateways.us-east-1.mbedcloud.com"
     },
