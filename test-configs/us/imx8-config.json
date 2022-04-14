@@ -39,7 +39,6 @@
         "SOC_die_temprature": 80,
         "ledConfig": "01",
         "radioConfig": "00",
-        "hardwareVersion": "SolidRun_i.MX8MM_HummingBoard_Pulse",
         "apiAddress":"https://api.us-east-1.mbedcloud.com",
         "gatewayServicesAddress":"https://gateways.us-east-1.mbedcloud.com",
         "kaasServicesAddress": "https://edge-k8s.us-east-1.mbedcloud.com"
@@ -68,7 +67,7 @@
         "maestro": "0.1.0",
         "docker": "20.10.10",
         "openssh": "OpenSSH_8.5p1",
-        "openssl": "1.1.1l",
+        "openssl": "1.1.1",
         "node": "16.13.0",
         "edge_core": "0.19.1",
         "kernel": "5.4.104-lmp-standard",

@@ -39,7 +39,6 @@
         "SOC_die_temprature": 80,
         "ledConfig": "01",
         "radioConfig": "00",
-        "hardwareVersion": "Avnet_XCZU3EG-SFVA625_SoM",
         "apiAddress":"https://api.us-east-1.mbedcloud.com",
         "gatewayServicesAddress":"https://gateways.us-east-1.mbedcloud.com",
         "kaasServicesAddress": "https://edge-k8s.us-east-1.mbedcloud.com"
@@ -57,8 +56,6 @@
     ],
     "config_path": {
         "identityJSON": "/userdata/edge_gw_config/identity.json",
-        "relay_term_config": "/wigwag/wigwag-core-modules/relay-term/config/config.json",
-        "device_db_yaml_config": "/wigwag/etc/devicejs/devicedb.yaml",
         "td_agent_bit_conf": "/etc/td-agent-bit/td-agent-bit.conf"
     },
     "binary_path": {
@@ -68,7 +65,7 @@
         "maestro": "0.1.0",
         "docker": "20.10.10",
         "openssh": "OpenSSH_8.5p1",
-        "openssl": "1.1.1l",
+        "openssl": "1.1.1",
         "node": "16.13.0",
         "edge_core": "0.19.1",
         "kernel": "5.15.16-lmp-standard",

@@ -39,7 +39,6 @@
         "SOC_die_temprature": 80,
         "ledConfig": "01",
         "radioConfig": "00",
-        "hardwareVersion": "Raspberry_Pi_3_Model_B_Plus_Rev_1.3",
         "apiAddress":"https://api.eu-west-1.mbedcloud.com",
         "gatewayServicesAddress":"https://gateways.eu-west-1.mbedcloud.com",
         "kaasServicesAddress": "https://edge-k8s.eu-west-1.mbedcloud.com"
@@ -68,7 +67,7 @@
         "maestro": "0.1.0",
         "docker": "20.10.10",
         "openssh": "OpenSSH_8.5p1",
-        "openssl": "1.1.1l",
+        "openssl": "1.1.1",
         "node": "16.13.0",
         "edge_core": "0.19.1",
         "kernel": "5.10.31-lmp-standard",
@@ -84,8 +83,8 @@
             "size": "42M"
         },
         "devtmpfs": {
-            "name": "Dev",
-            "size": "325M"
+            "name": "devtmpfs",
+            "size": "321M"
         }
     },
     "fileSystem": [
