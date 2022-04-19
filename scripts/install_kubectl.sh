@@ -23,8 +23,28 @@ set -e
 if [ $# -ne 2 ];
 then
     echo "ERROR - incorrect number of arguments. Usage:"
-    echo " ./install_kubectl.sh <api_url> <api_key>"
+    echo " ./install_kubectl.sh <K8 API URL> <api_key>"
     exit 2
+fi
+
+# Check edge-k8s API variable
+if [ ${#1} -le 30 ];
+then
+    echo "ERROR - K8S API URL $1 seems to be too short"
+    exit 2
+fi
+
+# https://edge-k8s.
+# 1234567890123456
+KUBE=$(expr substr $1 9 9)
+
+if [ "$KUBE" == "edge-k8s." ];
+then
+  # Do nothing, else branch is thing here
+  echo "Download and install kubectl..."
+else
+  echo "ERROR - K8 API URL '$1' is not starting with 'edge-k8s.' as expected."
+  exit 2
 fi
 
 # Install kubectl
