@@ -17,6 +17,7 @@ tar -xzf npm-8.7.0.tgz
 cd package
 sudo node bin/npm-cli.js install --prefix /usr/local -gf ../npm-8.7.0.tgz
 cd ../pelion-edge-ready-test-suite-2.6.0
+npm install
 sudo ./scripts/install_kubectl.sh <K8 API URL> <access key>
 ```
 
@@ -43,3 +44,5 @@ nano my-config.json
 
 Run the tests `sudo node index.js -c my-config.json -e`.
 - If you exit the shell, you will need to add the PATH again as it is not persisted.
+
+**NOTE! KaaS tests require that the account has Edge KaaS features enabled. By default KaaS features are not enabled.**
