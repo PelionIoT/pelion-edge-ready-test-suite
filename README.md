@@ -17,6 +17,7 @@ tar -xzf npm-8.7.0.tgz
 cd package
 sudo node bin/npm-cli.js install --prefix /usr/local -gf ../npm-8.7.0.tgz
 cd ../pelion-edge-ready-test-suite-2.6.0
+npm install
 sudo ./scripts/install_kubectl.sh <K8 API URL> <access key>
 ```
 
