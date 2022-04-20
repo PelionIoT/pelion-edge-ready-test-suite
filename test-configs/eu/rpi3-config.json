@@ -32,7 +32,7 @@
         "max_cpu_freq": 4200000,
         "device_mem": {
             "MemTotal": 900000,
-            "MemFree": 30000,
+            "MemFree": 28000,
             "MemAvailable": 400000
         },
         "entropy":200,
