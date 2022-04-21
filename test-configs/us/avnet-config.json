@@ -68,7 +68,7 @@
         "openssl": "1.1.1",
         "node": "16.14.2",
         "edge_core": "0.19.1",
-        "kernel": "5.15.16-lmp-standard",
+        "kernel": "5.10.93-lmp-standard",
         "td-agent-bit": "1.3.5"
     },
     "partitions": {
@@ -108,7 +108,7 @@
         "var",
         "wigwag"
     ],
-    "drivers_path": "/lib/modules/5.4.105-lmp-standard/kernel/drivers",
+    "drivers_path": "/lib/modules/5.10.93-lmp-standard/kernel/drivers",
     "drivers": [
         "bcma",
         "block",
