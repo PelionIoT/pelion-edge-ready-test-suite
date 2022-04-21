@@ -44,3 +44,5 @@ nano my-config.json
 
 Run the tests `sudo node index.js -c my-config.json -e`.
 - If you exit the shell, you will need to add the PATH again as it is not persisted.
+
+**NOTE! KaaS tests require that the account has Edge KaaS features enabled. By default KaaS features are not enabled.**
