@@ -55,7 +55,7 @@
         "lwm2m.eu-west-1.mbedcloud.com"
     ],
     "config_path": {
-        "identityJSON": "/userdata/edge_gw_config/identity.json",0
+        "identityJSON": "/userdata/edge_gw_config/identity.json",
         "td_agent_bit_conf": "/etc/td-agent-bit/td-agent-bit.conf"
     },
     "binary_path": {
