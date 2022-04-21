@@ -108,7 +108,7 @@
         "var",
         "wigwag"
     ],
-    "drivers_path": "/lib/modules/5.10.17-lmp-standard/kernel/drivers",
+    "drivers_path": "/lib/modules/5.10.31-lmp-standard/kernel/drivers",
     "drivers": [
         "block",
         "bluetooth",
