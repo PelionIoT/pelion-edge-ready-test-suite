@@ -74,15 +74,15 @@
     "partitions": {
         "/dev/disk/by-label/otaroot": {
             "name": "Sysroot",
-            "size": "14G"
+            "size": "14000000"
         },
         "/dev/mmcblk1p1": {
             "name": "Boot",
-            "size": "26M"
+            "size": "22000"
         },
         "devtmpfs": {
             "name": "Dev",
-            "size": "457M"
+            "size": "450000"
         }
     },
     "fileSystem": [

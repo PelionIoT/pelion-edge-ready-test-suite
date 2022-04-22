@@ -79,23 +79,23 @@
     "partitions": {
         "/dev/loop6": {
             "name": "snap_pelion-edge_x1",
-            "size": "2.4G"
+            "size": "2576980378"
         },
         "/dev/loop10": {
             "name": "snap-network-manager",
-            "size": "4.3M"
+            "size": "4508877"
         },
         "/dev/loop3": {
             "name": "snap-modem-manager",
-            "size": "1.8M"
+            "size": "1887437"
         },
         "/dev/loop12": {
             "name": "snap-snap-store",
-            "size": "50M"
+            "size": "52428800"
         },
         "udev": {
             "name": "Dev",
-            "size": "2.4G"
+            "size": "2576980378"
         }
     },
     "fileSystem": [

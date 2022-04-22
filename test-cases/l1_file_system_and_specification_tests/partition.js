@@ -45,17 +45,18 @@ describe('[Level 1] PartitionTests', () => {
   })
   describe('#PartitionSize', () => {
     Object.keys(global.config.partitions).forEach(partition_name => {
-      it(`Should return true if ${partition_name} partition mounted`, done => {
+      it(`Should return true if ${partition_name} is large enough`, done => {
         exec(
-          `df -h | grep ${partition_name} | awk '{print $2}'`,
+          `df | grep ${partition_name} | awk '{print $2}'`,
           (error, stdout) => {
+            console.log(stdout)
             if (error) {
               done(error)
             } else {
               assert.operator(
-                parseFloat(stdout.trim()),
+                parseInt(stdout.trim()),
                 '>=',
-                parseFloat(global.config.partitions[partition_name].size),
+                parseInt(global.config.partitions[partition_name].size),
                 `Expected: ${partition_name} size not valid`
               )
               done()
