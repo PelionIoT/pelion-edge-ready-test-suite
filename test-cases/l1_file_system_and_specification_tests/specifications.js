@@ -157,7 +157,6 @@ describe('[Level 1] SpecificationTests', () => {
     var identityJSONkeys = [
       'ledConfig',
       'radioConfig',
-      'hardwareVersion',
       'gatewayServicesAddress'
     ]
     identityJSONkeys.forEach(identity_key => {
