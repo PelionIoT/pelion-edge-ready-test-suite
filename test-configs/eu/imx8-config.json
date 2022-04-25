@@ -39,6 +39,7 @@
         "SOC_die_temprature": 80,
         "ledConfig": "01",
         "radioConfig": "00",
+        "hardwareVersion": "SolidRun_i.MX8MM_HummingBoard_Pulse",
         "apiAddress":"https://api.eu-west-1.mbedcloud.com",
         "gatewayServicesAddress":"https://gateways.eu-west-1.mbedcloud.com",
         "kaasServicesAddress": "https://edge-k8s.eu-west-1.mbedcloud.com"
@@ -56,6 +57,8 @@
     ],
     "config_path": {
         "identityJSON": "/userdata/edge_gw_config/identity.json",
+        "relay_term_config": "/wigwag/wigwag-core-modules/relay-term/config/config.json",
+        "device_db_yaml_config": "/wigwag/etc/devicejs/devicedb.yaml",
         "td_agent_bit_conf": "/etc/td-agent-bit/td-agent-bit.conf"
     },
     "binary_path": {
@@ -63,26 +66,26 @@
     },
     "program_version": {
         "maestro": "0.1.0",
-        "docker": "20.10.10",
-        "openssh": "OpenSSH_8.5p1",
+        "docker": "19.03.13-ce",
+        "openssh": "OpenSSH_8.3p1",
         "openssl": "1.1.1",
-        "node": "16.14.2",
-        "edge_core": "0.19.1",
+        "node": "12.19.0",
+        "edge_core": "0.15.0",
         "kernel": "5.4.104-lmp-standard",
         "td-agent-bit": "1.3.5"
     },
     "partitions": {
         "/dev/disk/by-label/otaroot": {
             "name": "Sysroot",
-            "size": "2200000"
+            "size": "2.4G"
         },
         "/dev/mmcblk1p1": {
             "name": "Boot",
-            "size": "80000"
+            "size": "84M"
         },
         "devtmpfs": {
             "name": "Dev",
-            "size": "450000"
+            "size": "457M"
         }
     },
     "fileSystem": [

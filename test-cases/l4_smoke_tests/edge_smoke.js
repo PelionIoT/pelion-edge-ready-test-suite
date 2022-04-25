@@ -31,10 +31,6 @@ describe('[Level 4] EdgeCoreTests', () => {
           } else {
             var edge_core_info = JSON.parse(body)
             var accountID = global.config.accountID
-            if (accountID === "") {
-              console.log("Account ID is empty, please update your config with account information.")
-              console.log("Account ID given by Edge core is %s.", edge_core_info['account-id'])
-            }
             assert.equal(
               edge_core_info['status'],
               'connected',
@@ -43,7 +39,7 @@ describe('[Level 4] EdgeCoreTests', () => {
             assert.equal(
               edge_core_info['account-id'],
               accountID,
-              `Edge core is not connected with right accountID`
+              `Edge core is not conncted with right accountID`
             )
             done()
           }
