@@ -23,7 +23,7 @@
     "@kubernetes/client-node": "^0.14.3",
     "atomic-sleep": "^1.0.0",
     "chai": "^4.3.1",
-    "colors": "^1.4.0",
+    "colors": "1.4.0",
     "commander": "^6.0.0",
     "compare-versions": "^3.6.0",
     "jsonminify": "^0.4.1",
