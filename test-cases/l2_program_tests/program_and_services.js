@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2020-2021, Pelion and affiliates.
+ * Copyright (c) 2023 Izuma Networks
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -215,8 +217,8 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
       })
     })
   })
-  describe('#KernalModules', () => {
-    var karnal_modules_config = [
+  describe('#KernelModules', () => {
+    var kernel_modules_config = [
       "CONFIG_IP_SET=m",
       "CONFIG_IP_SET_MAX=256",
       "CONFIG_IP_SET_BITMAP_IP=m",
@@ -236,7 +238,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
       "CONFIG_IP_SET_HASH_NETIFACE=m",
       "CONFIG_IP_SET_LIST_SET=m"
   ]
-  karnal_modules_config.forEach(module_config => {
+  kernel_modules_config.forEach(module_config => {
     it(`Should return true if ${module_config} exist`, (done) => {
       exec('zcat /proc/config.gz | grep CONFIG_IP_SET', (error, stdout, stderr) => {
         if (error) {
