@@ -59,7 +59,7 @@
         "td_agent_bit_conf": "/etc/td-agent-bit/td-agent-bit.conf"
     },
     "binary_path": {
-        "edge_core": "/wigwag/mbed/edge-core"
+        "edge_core": "/edge/mbed/edge-core"
     },
     "program_version": {
         "maestro": "0.1.0",
@@ -104,8 +104,7 @@
         "tmp",
         "userdata",
         "usr",
-        "var",
-        "wigwag"
+        "var"
     ],
   "services": [
         "edge-core",
