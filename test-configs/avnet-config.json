@@ -64,7 +64,7 @@
     "program_version": {
         "maestro": "0.1.0",
         "docker": "20.10.10",
-        "openssl": "1.1.1",
+        "openssl": "3.0.7",
         "node": "16.14.2",
         "edge_core": "0.21.0",
         "kernel": "5.10.93-lmp-standard",
