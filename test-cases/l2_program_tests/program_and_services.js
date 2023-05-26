@@ -33,7 +33,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         this.skip()
       }
       exec(
-        "maestro --version | grep -Po '(?<=maestro )\\d.\\d.\\d'",
+        "maestro --version |grep maestro | tail -1 | awk {'print $2'}",
         (error, stdout) => {
           if (error) {
             done(error)
