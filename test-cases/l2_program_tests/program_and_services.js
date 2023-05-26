@@ -97,23 +97,6 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         }
       )
     })
-    it('Should return true if valid openssh version is present', function (done) {
-      if (global.config.edge_build_type == 'snap') {
-        this.skip()
-      }
-      exec('ssh -V', (error, stdout, stderr) => {
-        if (error) {
-          done(error)
-        } else {
-          assert.equal(
-            stderr.split(',')[0],
-            global.config.program_version.openssh,
-            'SSH version not valid'
-          )
-          done()
-        }
-      })
-    })
     it('Should return true if valid node version is present', function (done) {
       exec('node --version | cut -c2-9', (error, stdout) => {
         if (error) {

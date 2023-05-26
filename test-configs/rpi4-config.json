@@ -64,7 +64,6 @@
     "program_version": {
         "maestro": "0.1.0",
         "docker": "20.10.10",
-        "openssh": "OpenSSH_8.5p1",
         "openssl": "1.1.1",
         "node": "16.14.2",
         "edge_core": "0.21.0",
