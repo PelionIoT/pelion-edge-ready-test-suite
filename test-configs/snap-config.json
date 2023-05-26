@@ -166,6 +166,6 @@
         "pelion-edge.edge-proxy",
         "pelion-edge.kubelet",
         "pelion-edge.maestro",
-        "pelion-edge.relay-term"
+        "pelion-edge.pe-terminal"
     ]
 }

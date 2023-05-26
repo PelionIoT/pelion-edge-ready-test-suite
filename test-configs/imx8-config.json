@@ -113,7 +113,7 @@
         "maestro",
         "edge-proxy",
         "docker",
-        "pelion-relay-term",
+        "edge-terminal",
         "td-agent-bit"
     ]
 }
