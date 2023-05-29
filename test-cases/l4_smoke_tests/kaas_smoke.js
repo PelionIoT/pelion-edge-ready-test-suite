@@ -23,7 +23,7 @@ const yaml = require('js-yaml')
 var sleep = require('atomic-sleep')
 var cm_name = 'test-cm' + randomstring.generate({ charset: 'hex' })
 var secret_name = 'test-secret' + randomstring.generate({ charset: 'hex' })
-var pod_name = 'test-pod' + randomstring.generate({ charset: 'hex' })
+var pod_name = 'perts-' + randomstring.generate({ charset: 'hex' })
 var Logger = require('../../utils/logger')
 var logger = new Logger({ moduleName: '', color: 'green' })
 
@@ -78,6 +78,7 @@ describe('[Level 4] KAASTests', () => {
         'name'
       ] = secret_name
       data[2]['spec']['nodeName'] = global.config.internal_id
+      data[2]['spec']['hostname'] = pod_name
       data[2]['spec']['volumes'][0]['configMap']['name'] = cm_name
       data[2]['spec']['volumes'][1]['secret']['secretName'] = secret_name
       yamlStr = yaml.dump(data[2])
@@ -90,7 +91,8 @@ describe('[Level 4] KAASTests', () => {
       setTimeout(() => {
         exec(`kubectl get pod ${pod_name}`, (error, stdout) => {
           this.retries(60)
-          logger.debug('Waiting for pod to be created')
+          let logstr="Waiting for pod " + pod_name + " to be created."
+          logger.debug(logstr)
           sleep(1000)
           if (error) {
             done(error)
@@ -124,7 +126,8 @@ describe('[Level 4] KAASTests', () => {
       setTimeout(() => {
         exec(`kubectl get pod ${pod_name}`, (error, stdout) => {
           this.retries(60)
-          logger.debug('Waiting for pod to be deleted')
+          logstr="Waiting for pod " + pod_name + " to be deleted."
+          logger.debug(logstr)
           sleep(1000)
           if (error) {
             done()
