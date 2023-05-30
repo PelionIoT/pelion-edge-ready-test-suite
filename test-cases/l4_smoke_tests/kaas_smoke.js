@@ -71,6 +71,7 @@ describe('[Level 4] KAASTests', () => {
       fs.writeFileSync('secret.yaml', yamlStr, 'utf8')
 
       data[2]['metadata']['name'] = pod_name
+      data[2]['spec']['hostname'] = pod_name
       data[2]['spec']['containers'][0]['env'][0]['valueFrom'][
         'configMapKeyRef'
       ]['name'] = cm_name
@@ -78,7 +79,6 @@ describe('[Level 4] KAASTests', () => {
         'name'
       ] = secret_name
       data[2]['spec']['nodeName'] = global.config.internal_id
-      data[2]['spec']['hostname'] = pod_name
       data[2]['spec']['volumes'][0]['configMap']['name'] = cm_name
       data[2]['spec']['volumes'][1]['secret']['secretName'] = secret_name
       yamlStr = yaml.dump(data[2])
