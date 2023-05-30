@@ -159,8 +159,7 @@ kubectl version --client
 
 # Setup kube config - to ROOT -user, as this script is running via sudo!
 if [ -e "$ROOTKUBECFG" ]; then
-    rand_kube=$(( RANDOM % 1024 ))
-    echo "WARNING - $ROOTKUBECFG folder alredy exists, backing it up as $ROOTKUBECFG.$rand_kube"
+    rand_kube=$(( RANDOM % 1024 + 1 ))
     mv "$ROOTKUBECFG" "$ROOTKUBECFG.$rand_kube"
 fi
 
@@ -222,12 +221,16 @@ echo "Device ID = $DID, Account ID  = $ACCID"
 if [[ "$CONFIG" == "" ]]; then
   if grep -q "Raspberry Pi 3" </proc/cpuinfo;  then
     CONFIG="test-configs/rpi3-config.json"
+    echo "Using Raspberry Pi3 configuration"
   elif grep -q "Raspberry Pi 4" </proc/cpuinfo; then
     CONFIG="test-configs/rpi4-config.json"
+    echo "Using Raspberry Pi4 configuration"
   elif [[ $(uname -a |awk '{print $2}') == "imx8mmevk" ]]; then
     CONFIG="test-configs/imx8-config.json"
+    echo "Using i.MX8 configuration"
   elif [[ -n "$SNAP" ]]; then
     CONFIG="test-configs/snap-config.json"
+    echo "Using Snap configuration"
   fi
 fi
 
@@ -241,9 +244,7 @@ if ! [[ -e "$CONFIG" ]]; then
 fi
 
 if [ -e "$TESTCONFIG"  ]; then
-    echo "WARNING - $TESTCONFIG file already exists."
-    rand_cfg=$(( RANDOM % 1024 ))
-    echo "Making a backup of it to $TESTCONFIG.$rand_cfg"
+    rand_cfg=$(( RANDOM % 1024 + 1 ))
     mv "$TESTCONFIG" "$TESTCONFIG.$rand_cfg"
 fi
 cp "$CONFIG" "$TESTCONFIG"
@@ -257,7 +258,16 @@ chown "$USER" "$TESTCONFIG"
 # Run test
 echo "Run test ($NODECMD index.js -c $TESTCONFIG) with KUBECONFIG=$KUBECONFIG env var preserved."
 sudo --preserve-env=KUBECONFIG "$NODECMD" index.js -c "$TESTCONFIG"
+
 # Do not leave credentials floating about, delete the kubectl config file.
+# Restore original files, if there were any...
 rm "$ROOTKUBECFG"
+rm "$TESTCONFIG"
+if [[ -n "$rand_kube" ]];then
+  mv "$ROOTKUBECFG.$rand_kube" "$ROOTKUBECFG"
+fi
+if [[ -n "$rand_cfg" ]];then
+  mv  "$TESTCONFIG.$rand_cfg" "$TESTCONFIG"
+fi
 
 echo "DONE - Check test results under suite_results -folder."
