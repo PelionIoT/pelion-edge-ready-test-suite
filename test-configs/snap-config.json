@@ -1,6 +1,6 @@
 {
     "title": "pelion-edge-ready-test-suite",
-    "version":"2.0.0",
+    "version":"2.6.0",
     "tests_directory": "test-cases",
     "accountID": "",
     "internal_id": "",
@@ -58,9 +58,7 @@
         "identityJSON": "/var/snap/pelion-edge/current/userdata/edge_gw_identity/identity.json",
         "mcc_config_working": "/var/snap/pelion-edge/current/userdata/mbed/mcc_config/WORKING",
         "mcc_config_backup": "/var/snap/pelion-edge/current/userdata/mbed/mcc_config/BACKUP",
-        "relay_term_config": "/snap/pelion-edge/current/wigwag/wigwag-core-modules/relay-term/config/config.json",
-        "device_db_yaml_config": "/var/snap/pelion-edge/current/wigwag/etc/devicejs/devicedb.yaml",
-        "nw_addr_order_conf": "/etc/gai.conf"
+        "terminal_config": "/snap/pelion-edge/current/pe-terminal.conf.json"
     },
     "binary_path": {
         "edge_core": "/snap/pelion-edge/current/wigwag/mbed/edge-core"
@@ -160,7 +158,6 @@
     ],
   "drivers_path": "/lib/modules/5.8.0-44-generic/kernel/drivers",
   "services": [
-        "pelion-edge.devicedb",
         "pelion-edge.dockerd",
         "pelion-edge.edge-core",
         "pelion-edge.edge-proxy",
