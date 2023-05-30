@@ -19,6 +19,8 @@
 
 # Stop on errors
 set -e
+SCRIPTNAME="perts.sh"
+REPONAME="pelion-edge-ready-test-suite"
 SERVER="https://edge-k8s.us-east-1.mbedcloud.com"
 CURDIR=$(pwd)
 CONFIG=""
@@ -32,7 +34,7 @@ NODEVER="v16.20.0"
 NPMVER="8.7.0"
 
 usage() {
-  echo "Usage: $0 -a access-key [-s Edge K8S server URL] [-e]"
+  echo "Usage: scripts/$SCRIPTNAME -a access-key [-s Edge K8S server URL] [-e]"
   echo "  -a                  access key"
   echo "  -c                  config file to use (will try to auto-detect if not give)"
   echo "  -s                  Edge K8S edge-server URL, default $SERVER"
@@ -41,9 +43,17 @@ usage() {
   echo "  --help              Show this help message and exit"
   echo ""
   echo "NOTE! Must be run as sudo, installation steps require sudo rights."
-  echo "You must run the scripts from the pelion-edge-ready-test-suite -folder."
+  echo "You must run this script from the $REPONAME -folder."
+  echo "I.e. scripts/$SCRIPTNAME -a <accesskey>"
   exit 1
 }
+
+curdir=$(pwd)
+lastdir="${curdir##*/}"
+if [[ "$lastdir" != "pelion-edge-ready-test-suite" ]]; then
+  echo "ERROR - not being run from correct directory."
+  usage
+fi
 
 # Parse arguments, if given...
 while getopts "a:c:s:p:e" opt; do
@@ -120,7 +130,10 @@ if ! [ -d "package" ]; then
 fi
 chown -R "$USER" package
 cd "package"
-sudo node bin/npm-cli.js install --prefix /usr/local -gf ../npm-8.7.0.tgz
+
+# For some reason on x64 systems just sudo node will not work - full path is required
+NODECMD="$CURDIR/node-$NODEVER-linux-$arch/bin/node"
+sudo "$NODECMD" bin/npm-cli.js install --prefix /usr/local -gf ../npm-8.7.0.tgz
 
 # Install kubectl
 arch=""
@@ -146,9 +159,9 @@ kubectl version --client
 
 # Setup kube config - to ROOT -user, as this script is running via sudo!
 if [ -e "$ROOTKUBECFG" ]; then
-    rando=$(( $RANDOM % 1024 ))
-    echo "WARNING - $ROOTKUBECFG folder alredy exists, backing it up as $ROOTKUBECFG.$rando"
-    mv "$ROOTKUBECFG" "$ROOTKUBECFG.$rando"
+    rand_kube=$(( RANDOM % 1024 ))
+    echo "WARNING - $ROOTKUBECFG folder alredy exists, backing it up as $ROOTKUBECFG.$rand_kube"
+    mv "$ROOTKUBECFG" "$ROOTKUBECFG.$rand_kube"
 fi
 
 echo "Creating kubectl config file to $ROOTKUBECFG"
@@ -171,7 +184,6 @@ users:
   user:
       token: $ACCESSKEY" > "$ROOTKUBECFG"
 
-#chmod a+r "$ROOTKUBECFG"
 export KUBECONFIG="$ROOTKUBECFG"
 
 # Install
@@ -180,32 +192,36 @@ npm install
 
 # Create config
 if [[ $EDGEPORT_GIVEN == 0 ]]; then
-  if [[ -n "${SNAP}" ]]; then
-        EDGEPORT=8081
-    else
-      # Try if we're on LmP.
-      EDGEPORT=9101
+  EDGEPORT=8081
+  EDGECORESTATUS=$(curl -s "localhost:${EDGEPORT}/status")
+  if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"') ]]; then
+    # Try if we're on LmP.
+    EDGEPORT=9101
+    EDGECORESTATUS=$(curl -s "localhost:${EDGEPORT}/status")
+    if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"') ]]; then
+      # Must be running on edge-core only then.
+      EDGEPORT=8080
       EDGECORESTATUS=$(curl -s "localhost:${EDGEPORT}/status")
       if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"') ]]; then
-          # Must be running on edge-core only then.
-          EDGEPORT=8080
-          EDGECORESTATUS=$(curl -s "localhost:${EDGEPORT}/status")
-          if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"') ]]; then
-            echo "ERROR - can't find localhost:<port>/status, is edge-core running?"
-            exit 1
-        fi
+        echo "ERROR - can't find localhost:<port>/status, is edge-core running?"
+        exit 1
+      fi
     fi
   fi
 fi
 DID=$(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"')
 ACCID=$(echo "$EDGECORESTATUS" | jq -r '."account-id"')
+if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"') ]]; then
+  echo "ERROR - can't find localhost:$EDGEPORT/status, is edge-core running / port correct?"
+  exit 1
+fi
 echo "Device ID = $DID, Account ID  = $ACCID"
 
 # If no config file given, try to guess
 if [[ "$CONFIG" == "" ]]; then
-  if [[ $(cat /proc/cpuinfo |grep "Raspberry Pi 3") ]]; then
+  if grep -q "Raspberry Pi 3" </proc/cpuinfo;  then
     CONFIG="test-configs/rpi3-config.json"
-  elif [[ $(cat /proc/cpuinfo |grep "Raspberry Pi 4") ]]; then
+  elif grep -q "Raspberry Pi 4" </proc/cpuinfo; then
     CONFIG="test-configs/rpi4-config.json"
   elif [[ $(uname -a |awk '{print $2}') == "imx8mmevk" ]]; then
     CONFIG="test-configs/imx8-config.json"
@@ -217,16 +233,15 @@ fi
 if ! [[ -e "$CONFIG" ]]; then
   echo "ERROR - cannot locate config file. Please specify it with -c or"
   echo "create your own config file and run tests manually with"
-  echo "    sudo node index.js -c <config-file.json>"
+  echo "    sudo $NODECMD index.js -c <config-file.json>"
   echo "Examples available in test-configs -folder."
-  echo "Add in device ID, account ID and access key."
-  echo -n 'Remember to add node.js to path, run PATH=$PATH:'
-  echo "$CURDIR/node-v16.14.2-linux-$arch/bin/"
+  echo "Insert device ID, account ID and access key to the config file."
+  exit 1
 fi
 
 if [ -e "$TESTCONFIG"  ]; then
     echo "WARNING - $TESTCONFIG file already exists."
-    rand_cfg=$(( $RANDOM % 1024 ))
+    rand_cfg=$(( RANDOM % 1024 ))
     echo "Making a backup of it to $TESTCONFIG.$rand_cfg"
     mv "$TESTCONFIG" "$TESTCONFIG.$rand_cfg"
 fi
@@ -239,8 +254,8 @@ echo "$TESTCONFIG created."
 chown "$USER" "$TESTCONFIG"
 
 # Run test
-echo "Run test (node index.js -c $TESTCONFIG) with KUBECONFIG=$KUBECONFIG env var preserved."
-sudo --preserve-env=KUBECONFIG node index.js -c "$TESTCONFIG"
+echo "Run test ($NODECMD index.js -c $TESTCONFIG) with KUBECONFIG=$KUBECONFIG env var preserved."
+sudo --preserve-env=KUBECONFIG "$NODECMD" index.js -c "$TESTCONFIG"
 # Do not leave credentials floating about, delete the kubectl config file.
 rm "$ROOTKUBECFG"
 
