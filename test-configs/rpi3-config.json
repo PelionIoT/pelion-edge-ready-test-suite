@@ -1,6 +1,6 @@
 {
     "title": "pelion-edge-ready-test-suite",
-    "version":"2.0.0",
+    "version":"2.6.0",
     "device_type": "rpi3bplus",
     "tests_directory": "test-cases",
     "accountID": "",
