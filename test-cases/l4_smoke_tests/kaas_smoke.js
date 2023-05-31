@@ -126,7 +126,7 @@ describe('[Level 4] KAASTests', () => {
       setTimeout(() => {
         exec(`kubectl get pod ${pod_name}`, (error, stdout) => {
           this.retries(60)
-          logstr="Waiting for pod " + pod_name + " to be deleted."
+          let logstr="Waiting for pod " + pod_name + " to be deleted."
           logger.debug(logstr)
           sleep(1000)
           if (error) {

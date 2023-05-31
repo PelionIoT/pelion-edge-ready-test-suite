@@ -222,7 +222,7 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
     kernel_modules_config.forEach(module_config => {
       if (fs.existsSync('/proc/config.gz')) {
         it(`Should return true if ${module_config} exist`, (done) => {
-          exec('zcat /proc/config.gz | grep CONFIG_IP_SET', (error, stdout, stderr) => {
+          exec('zcat /proc/config.gz | grep CONFIG_IP_SET', (error, stdout) => {
             if (error) {
               done(error)
             } else {
