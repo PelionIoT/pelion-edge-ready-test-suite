@@ -257,7 +257,7 @@ chown "$USER" "$TESTCONFIG"
 
 # Run test
 echo "Run test ($NODECMD index.js -c $TESTCONFIG) with KUBECONFIG=$KUBECONFIG env var preserved."
-sudo --preserve-env=KUBECONFIG "$NODECMD" index.js -c "$TESTCONFIG"
+sudo --preserve-env "$NODECMD" index.js -c "$TESTCONFIG"
 
 # Do not leave credentials floating about, delete the kubectl config file.
 # Restore original files, if there were any...
