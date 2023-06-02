@@ -119,7 +119,7 @@ if ! [ -e "node-$NODEVER-linux-$arch/bin/node" ]; then
   tar -xzf "node-$NODEVER-linux-$arch.tar.gz"
   chown -R "$USER" "node-$NODEVER-linux-$arch"
 fi
-PATH=$PATH:"$CURDIR/node-$NODEVER-linux-$arch/bin/"
+export PATH=$PATH:"$CURDIR/node-$NODEVER-linux-$arch/bin/"
 
 if ! [ -e "$CURDIR/npm-$NPMVER.tgz" ]; then
   wget https://registry.npmjs.org/npm/-/npm-8.7.0.tgz
