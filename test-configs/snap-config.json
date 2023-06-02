@@ -41,7 +41,8 @@
         "ledConfig": "01",
         "radioConfig": "00",
         "apiAddress":"https://api.us-east-1.mbedcloud.com",
-        "gatewayServicesAddress":"https://gateways.us-east-1.mbedcloud.com"
+        "gatewayServicesAddress":"https://gateways.us-east-1.mbedcloud.com",
+        "kaasServicesAddress": "https://edge-k8s.us-east-1.mbedcloud.com"
     },
     "interface": {
         "wired": "default",

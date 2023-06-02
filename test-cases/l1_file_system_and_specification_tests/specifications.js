@@ -169,7 +169,7 @@ describe('[Level 1] SpecificationTests', () => {
         assert.equal(
           identityJSON[identity_key],
           global.config.specifications[identity_key],
-          `${identity_key} config is diffrent`
+          `${identity_key} config is different`
         )
         done()
       })
