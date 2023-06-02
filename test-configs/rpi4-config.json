@@ -81,7 +81,7 @@
         },
         "devtmpfs": {
             "name": "devtmpfs",
-            "size": "790000"
+            "size": "700000"
         }
     },
     "fileSystem": [
