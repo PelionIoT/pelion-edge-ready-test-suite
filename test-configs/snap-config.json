@@ -44,7 +44,7 @@
         "gatewayServicesAddress":"https://gateways.us-east-1.mbedcloud.com"
     },
     "interface": {
-        "wired": "enp0s25",
+        "wired": "default",
         "wireless": "wlp3s0"
     },
     "connectivity_dns": [

@@ -255,6 +255,17 @@ jq ".access_key=\"$ACCESSKEY\"" "$TESTCONFIG" > "$tmp" && mv "$tmp" "$TESTCONFIG
 echo "$TESTCONFIG created."
 chown "$USER" "$TESTCONFIG"
 
+# Check it wires is stated as default, use:
+# route |grep default | awk '{print $NF}'
+# to get default network interface name
+
+wired=$(jq -r ".interface.wired" < "$CONFIG")
+if [[ "$wired" == "default" ]]; then
+  defnet=$(route |grep default | awk '{print $NF}')
+  echo "Configuring network interface $defnet to interface.wired"
+  jq ".interface.wired=\"$defnet\"" "$TESTCONFIG" > "$tmp" && mv "$tmp" "$TESTCONFIG"
+fi
+
 # Run test
 echo "Run test ($NODECMD index.js -c $TESTCONFIG) with KUBECONFIG=$KUBECONFIG env var preserved."
 sudo --preserve-env "$NODECMD" index.js -c "$TESTCONFIG"
