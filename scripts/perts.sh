@@ -111,7 +111,7 @@ esac
 # or (depending on your CPU-architecture)
 # wget https://nodejs.org/dist/v16.14.2/node-v16.14.2-linux-x64.tar.gz
 
-if ! [ -e node-$NODEVER-linux-$arch.tar.gz ]; then
+if ! [ -e "node-$NODEVER-linux-$arch.tar.gz" ]; then
   wget "https://nodejs.org/dist/$NODEVER/node-$NODEVER-linux-$arch.tar.gz"
   chown -R "$USER" "node-$NODEVER-linux-$arch.tar.gz"
 fi
@@ -119,7 +119,10 @@ if ! [ -e "node-$NODEVER-linux-$arch/bin/node" ]; then
   tar -xzf "node-$NODEVER-linux-$arch.tar.gz"
   chown -R "$USER" "node-$NODEVER-linux-$arch"
 fi
-export PATH=$PATH:"$CURDIR/node-$NODEVER-linux-$arch/bin/"
+# Only add node to PATH if it is not there yet
+if ! [[ " ${PATH//:/ } " =~  $CURDIR/node-$NODEVER-linux-$arch/bin/  ]]; then
+  export PATH=$PATH:"$CURDIR/node-$NODEVER-linux-$arch/bin/"
+fi
 
 if ! [ -e "$CURDIR/npm-$NPMVER.tgz" ]; then
   wget https://registry.npmjs.org/npm/-/npm-8.7.0.tgz
