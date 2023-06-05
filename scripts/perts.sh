@@ -31,7 +31,7 @@ ROOTKUBECFG="/home/root/perts-kube-config.yaml"
 
 # Node.JS and NPM versions
 NODEVER="v16.20.0"
-NPMVER="8.7.0"
+NPMVER="9.6.7"
 
 usage() {
   echo "Usage: scripts/$SCRIPTNAME -a access-key [-s Edge K8S server URL] [-e]"
@@ -125,7 +125,7 @@ if ! [[ " ${PATH//:/ } " =~  $CURDIR/node-$NODEVER-linux-$arch/bin/  ]]; then
 fi
 
 if ! [ -e "$CURDIR/npm-$NPMVER.tgz" ]; then
-  wget https://registry.npmjs.org/npm/-/npm-8.7.0.tgz
+  wget "https://registry.npmjs.org/npm/-/npm-$NPMVER.tgz"
   chown "$USER" npm-$NPMVER.tgz
 fi
 if ! [ -d "package" ]; then
@@ -136,7 +136,7 @@ cd "package"
 
 # For some reason on x64 systems just sudo node will not work - full path is required
 NODECMD="$CURDIR/node-$NODEVER-linux-$arch/bin/node"
-sudo "$NODECMD" bin/npm-cli.js install --prefix /usr/local -gf ../npm-8.7.0.tgz
+sudo "$NODECMD" bin/npm-cli.js install --prefix /usr/local -gf "../npm-$NPMVER.tgz"
 
 # Install kubectl
 arch=""
