@@ -30,7 +30,7 @@ EDGEPORT_GIVEN=0
 ROOTKUBECFG="/home/root/perts-kube-config.yaml"
 
 # Node.JS and NPM versions
-NODEVER="v16.20.0"
+NODEVER="v18.16.0"
 NPMVER="9.6.7"
 
 usage() {
