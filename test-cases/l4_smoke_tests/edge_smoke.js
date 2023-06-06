@@ -22,7 +22,7 @@ describe('[Level 4] EdgeCoreTests', () => {
   describe('#EdgeCore', () => {
     it('It should return true if edge core is connected with right account', done => {
       request(
-        `http://localhost:${
+        `http://127.0.0.1:${
           global.config.internal_server_port.edge_core_port
         }/status`,
         (err, resp, body) => {

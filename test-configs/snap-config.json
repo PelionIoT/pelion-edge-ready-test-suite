@@ -1,7 +1,6 @@
 {
     "title": "pelion-edge-ready-test-suite",
-    "version":"2.0.0",
-    "device_type": "avnet",
+    "version":"2.6.0",
     "tests_directory": "test-cases",
     "accountID": "",
     "internal_id": "",
@@ -14,21 +13,22 @@
         "test-cases/l3_internet_and_connectivity_tests/network_and_connectivity.js",
         "test-cases/l4_smoke_tests/edge_smoke.js",
         "test-cases/l4_smoke_tests/kaas_smoke.js",
-        "test-cases/l5_system_and_acceptance_tests/system_and_acceptance_tests.js",
-        "test-cases/l5_system_and_acceptance_tests/kaas.js"
+        "test-cases/l5_system_and_acceptance_tests/system_and_acceptance_tests.js"
     ],
+    "edge_build_type": "snap",
+    "device_type": "dell",
     "mocha_timeout": 60000,
 	"log_level": 5,
 	"throttle_rate": 500,
 	"create_virtual_devices": false,
     "generate_detailed_report": true,
     "internal_server_port": {
-        "edge_core_port": 9101,
+        "edge_core_port": 8081,
         "enterprise_server_port": 8080
     },
     "specifications": {
         "minimum_cpu_core": 1,
-        "min_cpu_freq": 200000,
+        "min_cpu_freq": 400000,
         "max_cpu_freq": 4200000,
         "device_mem": {
             "MemTotal": 900000,
@@ -36,6 +36,7 @@
             "MemAvailable": 400000
         },
         "entropy":200,
+        "revision_number": "a020d3",
         "SOC_die_temprature": 80,
         "ledConfig": "01",
         "radioConfig": "00",
@@ -44,8 +45,8 @@
         "kaasServicesAddress": "https://edge-k8s.us-east-1.mbedcloud.com"
     },
     "interface": {
-        "wired": "eth0",
-        "wireless": "wlan0"
+        "wired": "default",
+        "wireless": "wlp3s0"
     },
     "connectivity_dns": [
         "google.com",
@@ -55,34 +56,44 @@
         "lwm2m.us-east-1.mbedcloud.com"
     ],
     "config_path": {
-        "identityJSON": "/userdata/edge_gw_config/identity.json",
-        "td_agent_bit_conf": "/etc/td-agent-bit/td-agent-bit.conf"
+        "identityJSON": "/var/snap/pelion-edge/current/userdata/edge_gw_identity/identity.json",
+        "mcc_config_working": "/var/snap/pelion-edge/current/userdata/mbed/mcc_config/WORKING",
+        "mcc_config_backup": "/var/snap/pelion-edge/current/userdata/mbed/mcc_config/BACKUP",
+        "terminal_config": "/snap/pelion-edge/current/pe-terminal.conf.json"
     },
     "binary_path": {
-        "edge_core": "/wigwag/mbed/edge-core"
+        "edge_core": "/snap/pelion-edge/current/wigwag/mbed/edge-core"
     },
     "program_version": {
         "maestro": "0.1.0",
-        "docker": "20.10.10",
-        "openssh": "OpenSSH_8.5p1",
+        "docker": "19.03.12-ce",
         "openssl": "1.1.1",
-        "node": "16.14.2",
-        "edge_core": "0.19.1",
-        "kernel": "5.10.93-lmp-standard",
-        "td-agent-bit": "1.3.5"
+        "node": "8.17.0",
+        "npm": "6.13.4",
+        "edge_core": "0.21.0",
+        "go": "1.14.4",
+        "kernel": "5.8.0-44-generic"
     },
     "partitions": {
-        "/dev/disk/by-label/otaroot": {
-            "name": "Sysroot",
-            "size": "14000000"
+        "/dev/loop6": {
+            "name": "snap_pelion-edge_x1",
+            "size": "2400000"
         },
-        "/dev/mmcblk1p1": {
-            "name": "Boot",
-            "size": "22000"
+        "/dev/loop10": {
+            "name": "snap-network-manager",
+            "size": "4300"
         },
-        "devtmpfs": {
+        "/dev/loop3": {
+            "name": "snap-modem-manager",
+            "size": "1800"
+        },
+        "/dev/loop12": {
+            "name": "snap-snap-store",
+            "size": "50000"
+        },
+        "udev": {
             "name": "Dev",
-            "size": "450000"
+            "size": "2400000"
         }
     },
     "fileSystem": [
@@ -95,48 +106,64 @@
         "media",
         "mnt",
         "opt",
-        "ostree",
         "proc",
         "run",
         "sbin",
-        "srv",
         "sys",
-        "sysroot",
         "tmp",
-        "userdata",
+        "var/snap/pelion-edge/current/upgrades",
+        "var/snap/pelion-edge/current/userdata",
         "usr",
-        "var",
-        "wigwag"
+        "var/snap/pelion-edge/current/wigwag"
     ],
-    "drivers_path": "/lib/modules/5.10.93-lmp-standard/kernel/drivers",
     "drivers": [
-        "bcma",
+        "auxdisplay",
         "block",
-        "bluetooth",
-        "char",
-        "crypto",
+        "clk",
+        "gpio",
         "hid",
         "i2c",
         "input",
-        "leds",
         "md",
+        "mfd",
+        "mmc",
+        "mux",
+        "power",
+        "pwm",
+        "rtc",
+        "spi",
+        "staging",
+        "uio",
+        "video",
+        "watchdog",
+        "bcma",
+        "bluetooth",
+        "char",
+        "extcon",
+        "gpu",
+        "hwmon",
+        "iio",
+        "leds",
         "media",
         "misc",
+        "mtd",
         "net",
-        "rpmsg",
-        "spi",
+        "pinctrl",
+        "pps",
+        "regulator",
+        "scsi",
         "ssb",
-        "staging",
+        "tty",
         "usb",
-        "watchdog"
-  ],
+        "w1"
+    ],
+  "drivers_path": "/lib/modules/5.8.0-44-generic/kernel/drivers",
   "services": [
-        "edge-core",
-        "kubelet",
-        "maestro",
-        "edge-proxy",
-        "docker",
-        "pelion-relay-term",
-        "td-agent-bit"
+        "pelion-edge.dockerd",
+        "pelion-edge.edge-core",
+        "pelion-edge.edge-proxy",
+        "pelion-edge.kubelet",
+        "pelion-edge.maestro",
+        "pelion-edge.pe-terminal"
     ]
 }

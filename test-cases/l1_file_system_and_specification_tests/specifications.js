@@ -32,53 +32,56 @@ describe('[Level 1] SpecificationTests', () => {
         cpu_info().length,
         '>=',
         min_cpu_core,
-        `Minimum CPU core ${min_cpu_core} is not avilable`
+        `Minimum CPU core ${min_cpu_core} is not available`
       )
     })
     cpu_info().forEach((file, index) => {
-      it(
-        'Should return true if cpu' +
-          index +
-          ' have maximum required cpu frequency',
-        done => {
+      if (fs.existsSync('/sys/devices/system/cpu/cpu${index}/cpufreq/scaling_max_freq')) {
+        it(
+          'Should return true if cpu' +
+            index +
+            ' has maximum required cpu frequency',
+          done =>
+            exec(
+              `cat /sys/devices/system/cpu/cpu${index}/cpufreq/scaling_max_freq`,
+              (error, stdout) => {
+                var max_cpu_freq = global.config.specifications.max_cpu_freq
+                if (error) {
+                  throw error
+                } else {
+                  assert.operator(
+                    max_cpu_freq,
+                    '>=',
+                    parseInt(stdout),
+                    `Maximum CPU freqency ${max_cpu_freq} is not available`
+                  )
+                  done()
+                }
+              }
+            )
+          )
+      }
+      if (fs.existsSync('/sys/devices/system/cpu/cpu${index}/cpufreq/scaling_min_freq')) {
+        it(`Should return true if cpu${index} have minimum required cpu frequency`, done => {
           exec(
-            `cat /sys/devices/system/cpu/cpu${index}/cpufreq/scaling_max_freq`,
+            `cat /sys/devices/system/cpu/cpu${index}/cpufreq/scaling_min_freq`,
             (error, stdout) => {
-              var max_cpu_freq = global.config.specifications.max_cpu_freq
+              var min_cpu_freq = global.config.specifications.min_cpu_freq
               if (error) {
                 throw error
               } else {
                 assert.operator(
-                  max_cpu_freq,
-                  '>=',
+                  min_cpu_freq,
+                  '<=',
                   parseInt(stdout),
-                  `Maximum CPU freqency ${max_cpu_freq} is not avilable`
+                  `Minimum CPU freqency ${min_cpu_freq} is not available`
                 )
                 done()
               }
             }
           )
-        }
-      )
-      it(`Should return true if cpu${index} have minimum required cpu frequency`, done => {
-        exec(
-          `cat /sys/devices/system/cpu/cpu${index}/cpufreq/scaling_min_freq`,
-          (error, stdout) => {
-            var min_cpu_freq = global.config.specifications.min_cpu_freq
-            if (error) {
-              throw error
-            } else {
-              assert.operator(
-                min_cpu_freq,
-                '<=',
-                parseInt(stdout),
-                `Minimum CPU freqency ${min_cpu_freq} is not avilable`
-              )
-              done()
-            }
-          }
-        )
-      })
+        })
+      }
     })
   })
   describe('#MemoryTests', () => {
@@ -106,8 +109,9 @@ describe('[Level 1] SpecificationTests', () => {
     })
   })
   describe('#ConfigChecks', () => {
-    if (global.config.device_type != 'avnet') {
-      it('Should return true if chip tempature less then thresold', done => {
+    if (global.config.device_type != 'avnet' &&
+        fs.existsSync('fs./sys/devices/virtual/thermal/thermal_zone0/temp')) {
+      it('Should return true if chip temperature less then threshold', done => {
         exec(
           'cat /sys/devices/virtual/thermal/thermal_zone0/temp',
           (error, stdout) => {
@@ -141,7 +145,7 @@ describe('[Level 1] SpecificationTests', () => {
       })
     }
 
-    it('Should return true if sufficient entorpy available', done => {
+    it('Should return true if sufficient entropy available', done => {
       exec('cat /proc/sys/kernel/random/entropy_avail', (error, stdout) => {
         var entropy = global.config.specifications.entropy
         assert.operator(
@@ -165,7 +169,7 @@ describe('[Level 1] SpecificationTests', () => {
         assert.equal(
           identityJSON[identity_key],
           global.config.specifications[identity_key],
-          `${identity_key} config is diffrent`
+          `${identity_key} config is different`
         )
         done()
       })

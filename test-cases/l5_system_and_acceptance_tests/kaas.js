@@ -311,7 +311,7 @@ describe('[Level 5] KAASTests', function () {
           role: 'internet-pod'
         }
       },
-      'nggw-core-test-pod': {
+      'perts-test-pod': {
         type: 'internal-pod',
         label: {
           role: 'internal-pod',
@@ -460,7 +460,7 @@ describe('[Level 5] KAASTests', function () {
       )
     })
     it('Should return true if internet side pod can not ping other pods', async function () {
-      var command = `ping -c3 nggw-core-test-pod${config.internal_id}`.split(
+      var command = `ping -c3 perts-test-pod${config.internal_id}`.split(
         ' '
       )
       await execCommand(
@@ -513,7 +513,7 @@ describe('[Level 5] KAASTests', function () {
       )
     })
     it('Should return true if drive side pod can not ping other pods', async function () {
-      var command = `ping -c3 nggw-core-test-pod${config.internal_id}`.split(
+      var command = `ping -c3 perts-test-pod${config.internal_id}`.split(
         ' '
       )
       await execCommand(
@@ -535,7 +535,7 @@ describe('[Level 5] KAASTests', function () {
       var command = 'ping -c3 8.8.8.8'.split(' ')
       await execCommand(
         'default',
-        'nggw-core-test-pod' + config.internal_id,
+        'perts-test-pod' + config.internal_id,
         'client',
         command,
         20000
@@ -552,7 +552,7 @@ describe('[Level 5] KAASTests', function () {
       var command = `ping -c3 ${IP}`.split(' ')
       await execCommand(
         'default',
-        'nggw-core-test-pod' + config.internal_id,
+        'perts-test-pod' + config.internal_id,
         'client',
         command,
         20000
@@ -571,7 +571,7 @@ describe('[Level 5] KAASTests', function () {
       }`.split(' ')
       await execCommand(
         'default',
-        'nggw-core-test-pod' + config.internal_id,
+        'perts-test-pod' + config.internal_id,
         'client',
         command,
         20000

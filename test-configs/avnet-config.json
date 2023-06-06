@@ -1,7 +1,7 @@
 {
     "title": "pelion-edge-ready-test-suite",
-    "version":"2.0.0",
-    "device_type": "rpi3bplus",
+    "version":"2.6.0",
+    "device_type": "avnet",
     "tests_directory": "test-cases",
     "accountID": "",
     "internal_id": "",
@@ -32,16 +32,16 @@
         "max_cpu_freq": 4200000,
         "device_mem": {
             "MemTotal": 900000,
-            "MemFree": 28000,
+            "MemFree": 30000,
             "MemAvailable": 400000
         },
         "entropy":200,
         "SOC_die_temprature": 80,
         "ledConfig": "01",
         "radioConfig": "00",
-        "apiAddress":"https://api.eu-west-1.mbedcloud.com",
-        "gatewayServicesAddress":"https://gateways.eu-west-1.mbedcloud.com",
-        "kaasServicesAddress": "https://edge-k8s.eu-west-1.mbedcloud.com"
+        "apiAddress":"https://api.us-east-1.mbedcloud.com",
+        "gatewayServicesAddress":"https://gateways.us-east-1.mbedcloud.com",
+        "kaasServicesAddress": "https://edge-k8s.us-east-1.mbedcloud.com"
     },
     "interface": {
         "wired": "eth0",
@@ -49,40 +49,39 @@
     },
     "connectivity_dns": [
         "google.com",
-        "api.eu-west-1.mbedcloud.com",
-        "gateways.eu-west-1.mbedcloud.com",
-        "edge-k8s.eu-west-1.mbedcloud.com",
-        "lwm2m.eu-west-1.mbedcloud.com"
+        "api.us-east-1.mbedcloud.com",
+        "gateways.us-east-1.mbedcloud.com",
+        "edge-k8s.us-east-1.mbedcloud.com",
+        "lwm2m.us-east-1.mbedcloud.com"
     ],
     "config_path": {
         "identityJSON": "/userdata/edge_gw_config/identity.json",
         "td_agent_bit_conf": "/etc/td-agent-bit/td-agent-bit.conf"
     },
     "binary_path": {
-        "edge_core": "/wigwag/mbed/edge-core"
+        "edge_core": "/edge/mbed/edge-core"
     },
     "program_version": {
         "maestro": "0.1.0",
         "docker": "20.10.10",
-        "openssh": "OpenSSH_8.5p1",
-        "openssl": "1.1.1",
+        "openssl": "3.0.7",
         "node": "16.14.2",
-        "edge_core": "0.19.1",
-        "kernel": "5.10.31-lmp-standard",
+        "edge_core": "0.21.0",
+        "kernel": "5.10.93-lmp-standard",
         "td-agent-bit": "1.3.5"
     },
     "partitions": {
         "/dev/disk/by-label/otaroot": {
             "name": "Sysroot",
-            "size": "1400000"
+            "size": "14000000"
         },
-        "/dev/mmcblk0p1": {
+        "/dev/mmcblk1p1": {
             "name": "Boot",
-            "size": "40000"
+            "size": "22000"
         },
         "devtmpfs": {
-            "name": "devtmpfs",
-            "size": "300000"
+            "name": "Dev",
+            "size": "450000"
         }
     },
     "fileSystem": [
@@ -105,15 +104,15 @@
         "tmp",
         "userdata",
         "usr",
-        "var",
-        "wigwag"
+        "var"
     ],
-    "drivers_path": "/lib/modules/5.10.31-lmp-standard/kernel/drivers",
+    "drivers_path": "/lib/modules/5.10.93-lmp-standard/kernel/drivers",
     "drivers": [
+        "bcma",
         "block",
         "bluetooth",
         "char",
-        "gpu",
+        "crypto",
         "hid",
         "i2c",
         "input",
@@ -122,7 +121,10 @@
         "media",
         "misc",
         "net",
+        "rpmsg",
         "spi",
+        "ssb",
+        "staging",
         "usb",
         "watchdog"
   ],
@@ -132,7 +134,7 @@
         "maestro",
         "edge-proxy",
         "docker",
-        "pelion-relay-term",
+        "edge-terminal",
         "td-agent-bit"
     ]
 }

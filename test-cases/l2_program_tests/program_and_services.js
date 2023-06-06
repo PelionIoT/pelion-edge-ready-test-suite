@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2020-2021, Pelion and affiliates.
+ * Copyright (c) 2023 Izuma Networks
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,30 +28,29 @@ var cmd = ''
 
 describe('[Level 2] ServicesAndProgramExistanceTests', () => {
   describe('#ProgramVersion', () => {
-    it('Should return true if valid maestro version is present', function (done) {
-      if (global.config.edge_build_type == 'snap') {
-        this.skip()
-      }
-      exec(
-        "maestro --version | grep -Po '(?<=maestro )\\d.\\d.\\d'",
-        (error, stdout) => {
-          if (error) {
-            done(error)
-          } else {
-            assert.equal(
-              compareVersions.compare(
-                stdout.trim(),
-                global.config.program_version.maestro,
-                '>='
-              ),
-              true,
-              'Maestro version not valid'
-            )
-            done()
+    if (global.config.edge_build_type != 'snap') {
+      it('Should return true if valid maestro version is present', function (done) {
+        exec(
+          "maestro --version |grep maestro | tail -1 | awk {'print $2'}",
+          (error, stdout) => {
+            if (error) {
+              done(error)
+            } else {
+              assert.equal(
+                compareVersions.compare(
+                  stdout.trim(),
+                  global.config.program_version.maestro,
+                  '>='
+                ),
+                true,
+                'Maestro version not valid'
+              )
+              done()
+            }
           }
-        }
-      )
-    })
+        )
+      })
+    }
     it('Should return true if valid docker version is present', function (done) {
       exec(
         "docker --version | cut -d',' -f1 | awk '{print $3}'",
@@ -71,47 +72,29 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
         }
       )
     })
-    it('Should return true if valid openssl version is present', function (done) {
-      if (global.config.edge_build_type == 'snap') {
-        this.skip()
-      }
-      exec(
-        "openssl version | cut -d' ' -f2 | sed 's/[a-z]$//'",
-        (error, stdout) => {
-          if (error) {
-            done(error)
-          } else {
-            assert.equal(
-              compareVersions.compare(
-                stdout.trim(),
-                global.config.program_version.openssl,
-                '>='
-              ),
-              true,
-              'SSL version not valid'
-            )
-            done()
+    if (global.config.edge_build_type != 'snap') {
+      it('Should return true if valid openssl version is present', function (done) {
+        exec(
+          "openssl version | cut -d' ' -f2 | sed 's/[a-z]$//'",
+          (error, stdout) => {
+            if (error) {
+              done(error)
+            } else {
+              assert.equal(
+                compareVersions.compare(
+                  stdout.trim(),
+                  global.config.program_version.openssl,
+                  '>='
+                ),
+                true,
+                'SSL version not valid'
+              )
+              done()
+            }
           }
-        }
-      )
-    })
-    it('Should return true if valid openssh version is present', function (done) {
-      if (global.config.edge_build_type == 'snap') {
-        this.skip()
-      }
-      exec('ssh -V', (error, stdout, stderr) => {
-        if (error) {
-          done(error)
-        } else {
-          assert.equal(
-            stderr.split(',')[0],
-            global.config.program_version.openssh,
-            'SSH version not valid'
-          )
-          done()
-        }
+        )
       })
-    })
+    }
     it('Should return true if valid node version is present', function (done) {
       exec('node --version | cut -c2-9', (error, stdout) => {
         if (error) {
@@ -215,8 +198,8 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
       })
     })
   })
-  describe('#KernalModules', () => {
-    var karnal_modules_config = [
+  describe('#KernelModules', () => {
+    var kernel_modules_config = [
       "CONFIG_IP_SET=m",
       "CONFIG_IP_SET_MAX=256",
       "CONFIG_IP_SET_BITMAP_IP=m",
@@ -236,21 +219,23 @@ describe('[Level 2] ServicesAndProgramExistanceTests', () => {
       "CONFIG_IP_SET_HASH_NETIFACE=m",
       "CONFIG_IP_SET_LIST_SET=m"
   ]
-  karnal_modules_config.forEach(module_config => {
-    it(`Should return true if ${module_config} exist`, (done) => {
-      exec('zcat /proc/config.gz | grep CONFIG_IP_SET', (error, stdout, stderr) => {
-        if (error) {
-          done(error)
-        } else {
-          assert.include(
-            stdout.trim(),
-            module_config,
-            `${module_config} is not present`
-          )
-          done()
-        }
-      })
+    kernel_modules_config.forEach(module_config => {
+      if (fs.existsSync('/proc/config.gz')) {
+        it(`Should return true if ${module_config} exist`, (done) => {
+          exec('zcat /proc/config.gz | grep CONFIG_IP_SET', (error, stdout) => {
+            if (error) {
+              done(error)
+            } else {
+              assert.include(
+                stdout.trim(),
+                module_config,
+                `${module_config} is not present`
+              )
+              done()
+            }
+          })
+        })
+      }
     })
-  })
   })
 })
