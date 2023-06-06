@@ -71,7 +71,7 @@
         "td-agent-bit": "1.3.5"
     },
     "partitions": {
-        "/dev/disk/by-label/otaroot": {
+        "/dev/mmcblk1p2": {
             "name": "Sysroot",
             "size": "2200000"
         },
