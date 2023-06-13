@@ -196,15 +196,15 @@ npm install
 if [[ $EDGEPORT_GIVEN == 0 ]]; then
   EDGEPORT=8081
   EDGECORESTATUS=$(curl -s "localhost:${EDGEPORT}/status") || EDGECORESTATUS=""
-  if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"') ]]; then
+  if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."internal-id"') ]]; then
     # Try if we're on LmP.
     EDGEPORT=9101
     EDGECORESTATUS=$(curl -s "localhost:${EDGEPORT}/status") || EDGECORESTATUS=""
-    if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"') ]]; then
+    if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."internal-id"') ]]; then
       # Must be running on edge-core only then.
       EDGEPORT=8080
       EDGECORESTATUS=$(curl -s "localhost:${EDGEPORT}/status") || EDGECORESTATUS=""
-      if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"') ]]; then
+      if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."internal-id"') ]]; then
         echo "ERROR - can't find localhost:<port>/status, is edge-core running?"
         exit 1
       fi
@@ -212,9 +212,9 @@ if [[ $EDGEPORT_GIVEN == 0 ]]; then
   fi
 fi
 EDGECORESTATUS=$(curl -s "localhost:${EDGEPORT}/status") || EDGECORESTATUS=""
-DID=$(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"')
+DID=$(echo "$EDGECORESTATUS" | jq -r '."internal-id"')
 ACCID=$(echo "$EDGECORESTATUS" | jq -r '."account-id"')
-if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."endpoint-name"') ]]; then
+if [[ -z $(echo "$EDGECORESTATUS" | jq -r '."internal-id"') ]]; then
   echo "ERROR - can't find localhost:$EDGEPORT/status, is edge-core running / port correct?"
   exit 1
 fi
