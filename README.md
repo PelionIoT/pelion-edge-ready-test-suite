@@ -9,4 +9,4 @@ Run the [`script/perts.sh -a <access-key> -c <config-file-template>`](scripts/pe
 - The script will create a `test-config.json` file which is used as the configuration file for the test.
 - It will automatically populate the device ID and account ID based on the information it gets via `curl localhost:<port>/status`.
 
-**NOTE! KaaS tests require that the account has Edge KaaS features enabled. By default KaaS features are not enabled. Contact [Iazuma Networks](https://www.izumanetworks.com/) to enable it.**
+**NOTE! KaaS tests require that the account has Edge KaaS features enabled. By default KaaS features are not enabled. Contact [Izuma Networks](https://www.izumanetworks.com/) to enable it.**
