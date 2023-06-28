@@ -1,3 +1,4 @@
+#!/bin/sh
 # ----------------------------------------------------------------------------
 # Copyright (c) 2020-2021, Pelion and affiliates.
 #
@@ -17,7 +18,8 @@
 # ----------------------------------------------------------------------------
 
 TMPFILE=tmp.$$
-cp "/etc/td-agent-bit/td-agent-bit.conf" $TMPFILE
+cp "/etc/td-agent-bit/td-agent-bit.conf" "$TMPFILE"
 cp "conf/td-agent-bit.conf" "/etc/td-agent-bit/td-agent-bit.conf"
-cp $TMPFILE "conf/td-agent-bit.conf"
-rm -rf $TMPFILE
+cp "$TMPFILE" "conf/td-agent-bit.conf"
+rm -rf "$TMPFILE"
+

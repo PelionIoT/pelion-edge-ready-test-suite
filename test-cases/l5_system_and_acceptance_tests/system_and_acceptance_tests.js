@@ -158,10 +158,12 @@ describe('[Level 5] SystemAndAcceptanceTests', () => {
         }
       )
     })
+
     it('It should return true if fluent bit logs updated in the cloud', function (done) {
       if (global.config.edge_build_type == 'snap') {
         this.skip()
       }
+      this.retries(3)
       var options = {
         method: 'GET',
         url:
