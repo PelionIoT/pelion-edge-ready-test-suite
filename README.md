@@ -5,8 +5,8 @@ For a more thorough documentation about the Izuma Edge ready test suite, please 
 # Quick start
 
 Run the [`script/perts.sh -a <access-key> -c <config-file-template>`](scripts/perts.sh).
-- [`test-configs`](test-configs) -folder has multiple template scripts.
-- The script will create a `test-config.json` -file which it uses as the configuration file running the test.
+- [`test-configs`](test-configs) - folder has multiple template scripts.
+- The script will create a `test-config.json` file which is used as the configuration file for the test.
 - It will automatically populate the device ID and account ID based on the information it gets via `curl localhost:<port>/status`.
 
 **NOTE! KaaS tests require that the account has Edge KaaS features enabled. By default KaaS features are not enabled. Contact [Iazuma Networks](https://www.izumanetworks.com/) to enable it.**
