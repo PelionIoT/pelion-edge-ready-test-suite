@@ -42,10 +42,21 @@ usage() {
   echo "  -e                  echo commands (debug), default off"
   echo "  --help              Show this help message and exit"
   echo ""
+  echo "Requires jq to be installed."
+  echo ""
   echo "NOTE! Must be run as sudo, installation steps require sudo rights."
   echo "You must run this script from the $REPONAME -folder."
-  echo "I.e. scripts/$SCRIPTNAME -a <accesskey>"
+  echo "I.e. sudo scripts/$SCRIPTNAME -a <accesskey>"
   exit 1
+}
+
+assertInstalled() {
+  for var in "$@"; do
+      if ! which "$var" &> /dev/null; then
+          echo "Please install $var - for example sudo apt-get install $var!"
+          exit 1
+      fi
+  done
 }
 
 curdir=$(pwd)
@@ -105,6 +116,8 @@ case $(uname -m) in
       exit 1
       ;;
 esac
+
+assertInstalled jq
 
 # Get nodejs
 # wget https://nodejs.org/dist/v16.14.2/node-v16.14.2-linux-arm64.tar.gz
