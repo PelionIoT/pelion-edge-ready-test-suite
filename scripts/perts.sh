@@ -21,7 +21,8 @@
 set -e
 SCRIPTNAME="perts.sh"
 REPONAME="pelion-edge-ready-test-suite"
-SERVER="https://edge-k8s.us-east-1.mbedcloud.com"
+KAASSERVER="https://edge-k8s.us-east-1.mbedcloud.com"
+KAASSERVER_GIVEN=0
 CURDIR=$(pwd)
 CONFIG=""
 TESTCONFIG="test-config.json"
@@ -37,7 +38,7 @@ usage() {
   echo "Usage: scripts/$SCRIPTNAME -a access-key [-s Edge K8S server URL] [-e]"
   echo "  -a                  access key"
   echo "  -c                  config file to use (will try to auto-detect if not give)"
-  echo "  -s                  Edge K8S edge-server URL, default $SERVER"
+  echo "  -s                  Edge K8S edge-server URL, default $KAASSERVER (if -c config is given, picked up from there)"
   echo "  -p                  edge status port, default $EDGEPORT"
   echo "  -e                  echo commands (debug), default off"
   echo "  --help              Show this help message and exit"
@@ -46,7 +47,9 @@ usage() {
   echo ""
   echo "NOTE! Must be run as sudo, installation steps require sudo rights."
   echo "You must run this script from the $REPONAME -folder."
-  echo "I.e. sudo scripts/$SCRIPTNAME -a <accesskey>"
+  echo "I.e."
+  echo "   sudo scripts/$SCRIPTNAME -a <accesskey>"
+  echo "   sudo scripts/$SCRIPTNAME -a <accesskey> -c <test-config-file.json>"
   exit 1
 }
 
@@ -71,7 +74,8 @@ while getopts "a:c:s:p:e" opt; do
   case $opt in
     a ) ACCESSKEY="$OPTARG" ;;
     c ) CONFIG="$OPTARG" ;;
-    s ) SERVER="$OPTARG" ;;
+    s ) KAASSERVER="$OPTARG"
+        KAASSERVER_GIVEN=1 ;;
     p ) EDGEPORT="$OPTARG"
         EDGEPORT_GIVEN=1
         ;;
@@ -179,12 +183,17 @@ if [ -e "$ROOTKUBECFG" ]; then
     mv "$ROOTKUBECFG" "$ROOTKUBECFG.$rand_kube"
 fi
 
-echo "Creating kubectl config file to $ROOTKUBECFG"
-mkdir -p "/home/root/.kube"
+# Only try digging up KaaS server from conf file, if it was not given already
+cd "$CURDIR"
+if [ -n "$CONFIG" ] && [ $KAASSERVER_GIVEN = 0 ]; then
+  KAASSERVER=$(jq -r '.specifications.kaasServicesAddress' < "$CONFIG" )
+fi
+
+echo "Creating kubectl config file to $ROOTKUBECFG against $KAASSERVER"
 echo "apiVersion: v1
 clusters:
 - cluster:
-    server: $SERVER
+    server: $KAASSERVER
   name: edge-k8s
 contexts:
 - context:
