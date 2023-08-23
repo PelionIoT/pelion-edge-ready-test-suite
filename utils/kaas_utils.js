@@ -25,7 +25,7 @@ module.exports.podConfig = (
   nodename,
   label = { app: 'test' },
   containername = 'client',
-  conatinerimage = 'alpine:3.9'
+  conatinerimage = 'alpine:3.18'
 ) => {
   return {
     apiVersion: 'v1',
@@ -55,7 +55,7 @@ module.exports.podWithHostNW = (
   nodename,
   label = { app: 'test' },
   containername = 'client',
-  conatinerimage = 'alpine:3.9'
+  conatinerimage = 'alpine:3.18'
 ) => {
   return {
     apiVersion: 'v1',
@@ -86,7 +86,7 @@ module.exports.podWithFixHostname = (
   nodename,
   label = { app: 'test' },
   containername = 'client',
-  conatinerimage = 'alpine:3.9'
+  conatinerimage = 'alpine:3.18'
 ) => {
   return {
     apiVersion: 'v1',
