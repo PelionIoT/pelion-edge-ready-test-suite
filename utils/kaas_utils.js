@@ -42,6 +42,12 @@ module.exports.podConfig = (
         {
           name: containername,
           image: containerimage,
+          resources: {
+            limits: {
+              cpu: '200m',
+              memory: '100Mi'
+            }
+          },
           command: ['/bin/sh'],
           args: ['-c', "echo 'hello'; sleep 6000000"]
         }
@@ -73,6 +79,12 @@ module.exports.podWithHostNW = (
         {
           name: containername,
           image: containerimage,
+          resources: {
+            limits: {
+              cpu: '200m',
+              memory: '100Mi'
+            }
+          },
           command: ['/bin/sh'],
           args: ['-c', "echo 'hello'; sleep 6000000"]
         }
@@ -103,6 +115,12 @@ module.exports.podWithFixHostname = (
         {
           name: containername,
           image: containerimage,
+          resources: {
+            limits: {
+              cpu: '200m',
+              memory: '100Mi'
+            }
+          },
           command: ['/bin/sh'],
           args: ['-c', "echo 'hello'; sleep 6000000"]
         }
