@@ -25,7 +25,7 @@ module.exports.podConfig = (
   nodename,
   label = { app: 'test' },
   containername = 'client',
-  conatinerimage = 'alpine:3.9'
+  containerimage = 'alpine:3.18'
 ) => {
   return {
     apiVersion: 'v1',
@@ -41,7 +41,13 @@ module.exports.podConfig = (
       containers: [
         {
           name: containername,
-          image: conatinerimage,
+          image: containerimage,
+          resources: {
+            limits: {
+              cpu: '200m',
+              memory: '100Mi'
+            }
+          },
           command: ['/bin/sh'],
           args: ['-c', "echo 'hello'; sleep 6000000"]
         }
@@ -55,7 +61,7 @@ module.exports.podWithHostNW = (
   nodename,
   label = { app: 'test' },
   containername = 'client',
-  conatinerimage = 'alpine:3.9'
+  containerimage = 'alpine:3.18'
 ) => {
   return {
     apiVersion: 'v1',
@@ -72,7 +78,13 @@ module.exports.podWithHostNW = (
       containers: [
         {
           name: containername,
-          image: conatinerimage,
+          image: containerimage,
+          resources: {
+            limits: {
+              cpu: '200m',
+              memory: '100Mi'
+            }
+          },
           command: ['/bin/sh'],
           args: ['-c', "echo 'hello'; sleep 6000000"]
         }
@@ -86,7 +98,7 @@ module.exports.podWithFixHostname = (
   nodename,
   label = { app: 'test' },
   containername = 'client',
-  conatinerimage = 'alpine:3.9'
+  containerimage = 'alpine:3.18'
 ) => {
   return {
     apiVersion: 'v1',
@@ -102,7 +114,13 @@ module.exports.podWithFixHostname = (
       containers: [
         {
           name: containername,
-          image: conatinerimage,
+          image: containerimage,
+          resources: {
+            limits: {
+              cpu: '200m',
+              memory: '100Mi'
+            }
+          },
           command: ['/bin/sh'],
           args: ['-c', "echo 'hello'; sleep 6000000"]
         }

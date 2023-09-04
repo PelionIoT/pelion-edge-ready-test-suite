@@ -43,7 +43,7 @@ spec:
         - echo 'pod is running'; sleep 6000000
       command:
         - /bin/sh
-      image: alpine:3.9
+      image: alpine:3.18
       imagePullPolicy: IfNotPresent
       name: client
       resources:

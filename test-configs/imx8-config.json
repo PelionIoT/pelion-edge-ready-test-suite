@@ -1,6 +1,6 @@
 {
     "title": "pelion-edge-ready-test-suite",
-    "version":"2.6.0",
+    "version":"2.6.1",
     "device_type": "i.MX8",
     "tests_directory": "test-cases",
     "accountID": "",

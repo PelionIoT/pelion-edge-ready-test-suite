@@ -21,7 +21,8 @@
 set -e
 SCRIPTNAME="perts.sh"
 REPONAME="pelion-edge-ready-test-suite"
-SERVER="https://edge-k8s.us-east-1.mbedcloud.com"
+KAASSERVER="https://edge-k8s.us-east-1.mbedcloud.com"
+KAASSERVER_GIVEN=0
 CURDIR=$(pwd)
 CONFIG=""
 TESTCONFIG="test-config.json"
@@ -37,16 +38,62 @@ usage() {
   echo "Usage: scripts/$SCRIPTNAME -a access-key [-s Edge K8S server URL] [-e]"
   echo "  -a                  access key"
   echo "  -c                  config file to use (will try to auto-detect if not give)"
-  echo "  -s                  Edge K8S edge-server URL, default $SERVER"
+  echo "  -s                  Edge K8S edge-server URL, default $KAASSERVER (if -c config is given, picked up from there)"
   echo "  -p                  edge status port, default $EDGEPORT"
   echo "  -e                  echo commands (debug), default off"
   echo "  --help              Show this help message and exit"
   echo ""
+  echo "Requires jq to be installed."
+  echo ""
   echo "NOTE! Must be run as sudo, installation steps require sudo rights."
   echo "You must run this script from the $REPONAME -folder."
-  echo "I.e. scripts/$SCRIPTNAME -a <accesskey>"
+  echo "I.e."
+  echo "   sudo scripts/$SCRIPTNAME -a <accesskey>"
+  echo "   sudo scripts/$SCRIPTNAME -a <accesskey> -c <test-config-file.json>"
   exit 1
 }
+
+assertInstalled() {
+  for var in "$@"; do
+      if ! which "$var" &> /dev/null; then
+          echo "Please install $var - for example sudo apt-get install $var!"
+          exit 1
+      fi
+  done
+}
+
+# cleanup - delete the created config files before exiting.
+# - if a parameters is not given, we exit with error code
+#   as we assume we got trapped.
+cleanup() {
+  local exit_code=0
+  if [ $# -eq 0 ]; then
+    exit_code=1
+  fi
+  echo "Cleaning up..."
+
+  # Check if the config file exists before attempting to delete it
+  if [ -e "$ROOTKUBECFG" ]; then
+      rm -f "$ROOTKUBECFG"
+      echo "Configuration file deleted: $ROOTKUBECFG"
+  fi
+  if [ -e "$TESTCONFIG" ]; then
+      rm -f "$TESTCONFIG"
+      echo "Test configuration file deleted: $TESTCONFIG"
+  fi
+
+  if [[ -n "$rand_kube" ]];then
+    mv "$ROOTKUBECFG.$rand_kube" "$ROOTKUBECFG"
+  fi
+  if [[ -n "$rand_cfg" ]];then
+    mv  "$TESTCONFIG.$rand_cfg" "$TESTCONFIG"
+  fi
+  # Exit the script
+
+  exit $exit_code
+}
+
+trap 'cleanup' INT TERM ERR
 
 curdir=$(pwd)
 lastdir="${curdir##*/}"
@@ -60,7 +107,8 @@ while getopts "a:c:s:p:e" opt; do
   case $opt in
     a ) ACCESSKEY="$OPTARG" ;;
     c ) CONFIG="$OPTARG" ;;
-    s ) SERVER="$OPTARG" ;;
+    s ) KAASSERVER="$OPTARG"
+        KAASSERVER_GIVEN=1 ;;
     p ) EDGEPORT="$OPTARG"
         EDGEPORT_GIVEN=1
         ;;
@@ -105,6 +153,8 @@ case $(uname -m) in
       exit 1
       ;;
 esac
+
+assertInstalled jq
 
 # Get nodejs
 # wget https://nodejs.org/dist/v16.14.2/node-v16.14.2-linux-arm64.tar.gz
@@ -166,12 +216,17 @@ if [ -e "$ROOTKUBECFG" ]; then
     mv "$ROOTKUBECFG" "$ROOTKUBECFG.$rand_kube"
 fi
 
-echo "Creating kubectl config file to $ROOTKUBECFG"
-mkdir -p "/home/root/.kube"
+# Only try digging up KaaS server from conf file, if it was not given already
+cd "$CURDIR"
+if [ -n "$CONFIG" ] && [ $KAASSERVER_GIVEN = 0 ]; then
+  KAASSERVER=$(jq -r '.specifications.kaasServicesAddress' < "$CONFIG" )
+fi
+
+echo "Creating kubectl config file to $ROOTKUBECFG against $KAASSERVER"
 echo "apiVersion: v1
 clusters:
 - cluster:
-    server: $SERVER
+    server: $KAASSERVER
   name: edge-k8s
 contexts:
 - context:
@@ -275,13 +330,6 @@ sudo --preserve-env "$NODECMD" index.js -c "$TESTCONFIG"
 
 # Do not leave credentials floating about, delete the kubectl config file.
 # Restore original files, if there were any...
-rm "$ROOTKUBECFG"
-rm "$TESTCONFIG"
-if [[ -n "$rand_kube" ]];then
-  mv "$ROOTKUBECFG.$rand_kube" "$ROOTKUBECFG"
-fi
-if [[ -n "$rand_cfg" ]];then
-  mv  "$TESTCONFIG.$rand_cfg" "$TESTCONFIG"
-fi
+cleanup 0
 
 echo "DONE - Check test results under suite_results -folder."
