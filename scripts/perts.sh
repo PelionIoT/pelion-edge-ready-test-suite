@@ -62,6 +62,39 @@ assertInstalled() {
   done
 }
 
+# cleanup - delete the created config files before exiting.
+# - if a parameters is not given, we exit with error code
+#   as we assume we got trapped.
+cleanup() {
+  local exit_code=0
+  if [ $# -eq 0 ]; then
+    exit_code=1
+  fi
+  echo "Cleaning up..."
+
+  # Check if the config file exists before attempting to delete it
+  if [ -e "$ROOTKUBECFG" ]; then
+      rm -f "$ROOTKUBECFG"
+      echo "Configuration file deleted: $ROOTKUBECFG"
+  fi
+  if [ -e "$TESTCONFIG" ]; then
+      rm -f "$TESTCONFIG"
+      echo "Test configuration file deleted: $TESTCONFIG"
+  fi
+
+  if [[ -n "$rand_kube" ]];then
+    mv "$ROOTKUBECFG.$rand_kube" "$ROOTKUBECFG"
+  fi
+  if [[ -n "$rand_cfg" ]];then
+    mv  "$TESTCONFIG.$rand_cfg" "$TESTCONFIG"
+  fi
+  # Exit the script
+
+  exit $exit_code
+}
+
+trap 'cleanup' INT TERM ERR
+
 curdir=$(pwd)
 lastdir="${curdir##*/}"
 if [[ "$lastdir" != "pelion-edge-ready-test-suite" ]]; then
@@ -297,13 +330,6 @@ sudo --preserve-env "$NODECMD" index.js -c "$TESTCONFIG"
 
 # Do not leave credentials floating about, delete the kubectl config file.
 # Restore original files, if there were any...
-rm "$ROOTKUBECFG"
-rm "$TESTCONFIG"
-if [[ -n "$rand_kube" ]];then
-  mv "$ROOTKUBECFG.$rand_kube" "$ROOTKUBECFG"
-fi
-if [[ -n "$rand_cfg" ]];then
-  mv  "$TESTCONFIG.$rand_cfg" "$TESTCONFIG"
-fi
+cleanup 0
 
 echo "DONE - Check test results under suite_results -folder."
