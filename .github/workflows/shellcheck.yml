@@ -16,3 +16,21 @@ jobs:
       - uses: actions/checkout@v3
       - run: shellcheck --version
       - run: shellcheck scripts/*.sh
+  run-misspell:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run misspell
+        run: |
+            curl -L -o ./install-misspell.sh https://git.io/misspell
+            sh ./install-misspell.sh
+            bin/misspell -i mosquitto,Stichting,Mathematisch scripts test_cases test-configs utils conf >misspell.log
+            echo "### misspell" >>$SUMMARY_FILE
+            cat misspell.log >>$SUMMARY_FILE
+            bin/misspell -error -i mosquitto .
+            lines=$(wc -l < "misspell.log")
+            if [[ $lines -gt 0 ]]; then
+              echo "Misspell has findings, fail."
+              echo "TEST_FAIL=true" >> $GITHUB_ENV
+              exit 1
+            fi   
