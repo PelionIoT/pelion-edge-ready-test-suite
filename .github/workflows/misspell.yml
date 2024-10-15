@@ -1,0 +1,22 @@
+name: Misspell
+on: 
+  push:
+  workflow_dispatch:
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: perts-misspell-'${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  misspell:
+    runs-on: client
+    steps:
+        - name: Check out code
+          uses: actions/checkout@v4
+        - name: Remove folders we do not want to check (as we do not control them)
+          run: rm -rf node_modules vendor-licenses.txt
+        - name: Misspell
+          uses: PelionIoT/actions/.github/actions/misspell@main
+          with:
+            exceptions: "mosquitto"
