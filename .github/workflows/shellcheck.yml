@@ -11,8 +11,9 @@ concurrency:
   cancel-in-progress: true
 jobs:
   run-shellcheck:
-    runs-on: ubuntu-22.04
+    runs-on: client
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y shellcheck
       - run: shellcheck --version
       - run: shellcheck scripts/*.sh
